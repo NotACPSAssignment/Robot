@@ -459,7 +459,12 @@ void drawTower() {
 			gluDisk(gluNewQuadric(), 0, 3, 4,4);
 			glPushMatrix();
 			glTranslatef(0, 0, -4);
-				drawTowerCannon();
+			
+			glPushMatrix();
+			glRotatef(180, 0, 0, 1);
+			drawTowerCannon();
+			glPopMatrix();
+					
 			glPopMatrix(); 
 		glPopMatrix(); 
 		
