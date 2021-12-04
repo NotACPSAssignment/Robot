@@ -36,7 +36,7 @@ float baseLength = 0.25*lowerBodyD;
 
 // Control Robot body rotation on base
 float robotAngle = 0.0;
-
+float robotAngle2 = 0.0;
 // Control arm rotation
 float shoulderAngle = -40.0;
 float gunAngle = -25.0;
@@ -55,6 +55,9 @@ float zPos = 0;
 //Wheel Rotation angle
 float wAngle = 2;
 
+float xPosCan = 0; 
+float yPosCan = 0;
+float wheelRot = 0;
 // Lighting/shading and material properties for robot - upcoming lecture - just copy for now
 
 GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
@@ -119,8 +122,10 @@ void drawBody();
 void drawHead();
 void drawLowerBody();
 void drawCannon();
-void drawRightArm();
-void drawLeftArm();
+void drawTower(); 
+void drawTowerCannon();
+void aimUp(void);
+void aimDown(void);
 
 int main(int argc, char **argv)
 {
@@ -208,16 +213,17 @@ void display(void)
 	// Set up the camera at position (0, 6, 22) looking at the origin, up along positive y axis
 	//gluLookAt(0, -4.0, 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	gluLookAt(0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-
-	// Draw Robot
-
-	// Apply modelling transformations M to move robot
-	// Current transformation matrix is set to IV, where I is identity matrix
-	// CTM = IV
-	drawRobot();
-
-
-
+	
+	//drawRobot();
+	glPushMatrix();
+	glTranslatef(robotAngle2, 0, 0);
+	glRotatef(robotAngle, 0, 1, 0);
+		glPushMatrix(); 
+			glTranslatef(0, -2, 0);
+			glRotatef(90, 1, 0, 0);
+			drawTower();
+		glPopMatrix();
+	glPopMatrix();
 	// Draw ground
 	glPushMatrix();
 	glTranslatef(0.0, -20.0, 0.0);
@@ -231,11 +237,8 @@ void drawRobot()
 {
 
 	glPushMatrix();
-
 	glTranslatef(xPos, yPos, zPos);
 	glRotatef(robotAngle, 0.0, 1.0, 0.0);
-
-
 	glPushMatrix();
 	drawBody();
 	drawLowerBody();
@@ -243,11 +246,9 @@ void drawRobot()
 	drawHead();
 	glPushMatrix();
 	drawCannon();
-	drawRightArm();
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
-
 	glPopMatrix();
 
 }
@@ -446,23 +447,114 @@ void drawCannon()
 
 }
 
-void drawRightArm()
-{
+void drawTower() {
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+	glRotatef(-45, 0, 0, 1);
+	glPushMatrix(); 
+		gluCylinder(gluNewQuadric(), 3,3,1 ,4, 4);
+		glPushMatrix(); 
+			gluDisk(gluNewQuadric(), 0, 3, 4,4);
+			glPushMatrix();
+			glTranslatef(0, 0, -4);
+				drawTowerCannon();
+			glPopMatrix(); 
+		glPopMatrix(); 
+		
+		glPushMatrix();
+			glTranslatef(-3.5, 3.5, 0.5);
+			glRotatef(90, 1, 1, 0);
+			gluCylinder(gluNewQuadric(), 0.5, 0.5, 10, 20, 20);
+			glPushMatrix();
+				glRotatef(robotAngle, 0, 0, 1);
+				gluCylinder(gluNewQuadric(), 2, 2, 1,12, 12);
+				glPushMatrix();
+					gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(0, 0, 1);
+					gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+				glPopMatrix();
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0,0,9);
+				glRotatef(robotAngle, 0, 0, 1);	
+				gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
+				glPushMatrix();
+					gluDisk(gluNewQuadric(), 0, 2,12, 12);
+				glPopMatrix();
+				glPushMatrix();
+				glTranslatef(0, 0, 1);
+					gluDisk(gluNewQuadric(), 0, 2, 20, 20);
+				glPopMatrix();
+			glPopMatrix();
+		glPopMatrix();	
+	glPopMatrix();
+}
 
+void drawTowerCannon() {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, robotArm_mat_ambient);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, robotArm_mat_specular);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotArm_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
-	
 
-	//  Gun
-	glMaterialfv(GL_FRONT, GL_AMBIENT, gun_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, gun_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, gun_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, gun_mat_shininess);
+	glPushMatrix();
+		gluCylinder(gluNewQuadric(), 1, 3, 4, 4, 4);
+		glRotatef(wheelRot, 1, 1, 0);
+		glPushMatrix();
+		glTranslatef(0, 0, -1);
+		gluSphere(gluNewQuadric(), 1, 20, 20);
+			glPushMatrix(); 
+			glTranslatef(2, -2, -1);
+				glRotatef(-90, 1, 1, 0);
+				gluCylinder(gluNewQuadric(), 2, 1.5, 5, 4, 4);
+				glPushMatrix(); 
+					gluDisk(gluNewQuadric(), 0, 2, 4,4);
+					glPushMatrix(); 
+						glTranslatef(1,-1,-1);
+						glRotatef(-90, 1, 1, 0);
+						gluCylinder(gluNewQuadric(), 3, 3, 2.8, 20, 20);
 
+						glPushMatrix();
+							gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+						glPopMatrix(); 
 
+						glPushMatrix();
+							glTranslatef(0,0,2.9);
+							gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+						glPopMatrix();
+					glPopMatrix(); 
+				glPopMatrix(); 
+				glPushMatrix();
+					glTranslatef(0, 0,5);
+					gluDisk(gluNewQuadric(), 0, 1.5, 4, 4);
+					glPushMatrix();
+						gluCylinder(gluNewQuadric(), 1, 1, 0.5, 20, 20);
+						glPushMatrix();
+						glTranslatef(0, 0, 0.5);
+						gluDisk(gluNewQuadric(), 0, 1,20, 20);
+							glPushMatrix();
+								glTranslatef(-0.4, 0.4, 0);
+								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+							glPopMatrix();
+							glPushMatrix();
+								glTranslatef(0.4, -0.4, 0);
+								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+							glPopMatrix();
+							glPushMatrix();
+								
+								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+							glPopMatrix();
+						glPopMatrix();
+					glPopMatrix(); 
+				glPopMatrix();
+			glPopMatrix(); 
+		glPopMatrix();
+	glPopMatrix(); 
 }
+
 
 // Callback, called at initialization and whenever user resizes the window.
 void reshape(int w, int h)
@@ -484,6 +576,18 @@ void reshape(int w, int h)
 
 bool stop = false;
 
+void aimDown(void) {
+	wheelRot += 1; 
+	if (wheelRot > 30)
+		wheelRot -=1;
+	glutPostRedisplay();
+}
+void aimUp(void) {
+	wheelRot -= 1;
+	if (wheelRot < -20)
+		wheelRot += 1;
+	glutPostRedisplay();
+}
 // Callback, handles input from the keyboard, non-arrow keys
 void keyboard(unsigned char key, int x, int y)
 {
@@ -492,16 +596,24 @@ void keyboard(unsigned char key, int x, int y)
 	case 't':
 
 		break;
-	case 'a':
+	case 'w':
 		robotAngle += 2.0;
 		if (robotAngle >= 360) {
 			robotAngle = 0;
+			
+		}
+		if (robotAngle2 >= 360) {
+			robotAngle2 = 0;
+
 		}
 		break;
-	case 'd':
+	case 's':
 		robotAngle -= 2.0;
 		if (robotAngle <= -360) {
 			robotAngle = 0;
+		}
+		if (robotAngle2 <= -360) {
+			robotAngle2 = 0;
 		}
 		break;
 	case 'z':
@@ -524,15 +636,15 @@ void keyboard(unsigned char key, int x, int y)
 			shoulderAngle -= 2.0;
 		}
 		break;
-	case 'w':
+	case 'a':
 		xPos += robotMove * sin((robotAngle * M_PI) / 180);
 		zPos += robotMove * cos((robotAngle * M_PI) / 180);
-		wAngle += 5;
+		robotAngle2 -= 5;
 		break;
-	case 's':
+	case 'd':
 		xPos -= robotMove * sin((robotAngle * M_PI) / 180);
 		zPos -= robotMove * cos((robotAngle * M_PI) / 180);
-		wAngle -= 5;
+		robotAngle2 += 5;
 		break;
 	case 'v':
 		glutTimerFunc(10, animationHandler, 0);
@@ -593,14 +705,19 @@ void mouse(int button, int state, int x, int y)
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
 		{
-			;
-
+			glutIdleFunc(aimUp); 
+		}
+		if (state == GLUT_UP) {
+			glutIdleFunc(NULL);
 		}
 		break;
 	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
 		{
-			;
+			glutIdleFunc(aimDown);
+		}
+		if (state == GLUT_UP) {
+			glutIdleFunc(NULL);
 		}
 		break;
 	default:
