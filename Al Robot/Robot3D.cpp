@@ -55,9 +55,16 @@ float zPos = 0;
 //Wheel Rotation angle
 float wAngle = 2;
 
-float xPosCan = 0; 
+float xPosCan = 0;
 float yPosCan = 0;
 float wheelRot = 0;
+
+//Laser variables
+struct laserValues {
+	float laserXPos, laserYPos, laserZPos, laserTimer, laserAngle;
+	int fired;
+}laserV;
+
 // Lighting/shading and material properties for robot - upcoming lecture - just copy for now
 
 GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
@@ -122,10 +129,12 @@ void drawBody();
 void drawHead();
 void drawLowerBody();
 void drawCannon();
-void drawTower(); 
+void drawTower();
 void drawTowerCannon();
 void aimUp(void);
 void aimDown(void);
+void fireLaser(int on);
+void drawLaser(int on);
 
 int main(int argc, char **argv)
 {
@@ -213,17 +222,23 @@ void display(void)
 	// Set up the camera at position (0, 6, 22) looking at the origin, up along positive y axis
 	//gluLookAt(0, -4.0, 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	gluLookAt(0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	
+
 	//drawRobot();
 	glPushMatrix();
 	glTranslatef(robotAngle2, 0, 0);
 	glRotatef(robotAngle, 0, 1, 0);
-		glPushMatrix(); 
-			glTranslatef(0, -2, 0);
-			glRotatef(90, 1, 0, 0);
-			drawTower();
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, -2, 0);
+	glRotatef(90, 1, 0, 0);
+	drawTower();
 	glPopMatrix();
+	glPopMatrix();
+
+	//Laser Funcs
+	fireLaser(laserV.fired);
+	
+	drawLaser(laserV.fired);
+
 	// Draw ground
 	glPushMatrix();
 	glTranslatef(0.0, -20.0, 0.0);
@@ -286,11 +301,11 @@ void drawBody()
 	glTranslatef(0.0, 7, 0.0);
 	glScalef(robotBodyWidth * 0.1, robotBodyLength * 0.4, robotBodyDepth * 0.2);
 	glRotatef(90, 1, 0, 0);
-	gluCylinder(gluNewQuadric(),0.5,0.5,1,12,12);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 12, 12);
 	glPopMatrix();
 
-	
-	
+
+
 }
 
 void drawHead()
@@ -352,7 +367,7 @@ void drawLowerBody()
 
 	// Beams
 	glPushMatrix();
-	glTranslatef(0.0,7, 0.0); // this will be done last
+	glTranslatef(0.0, 7, 0.0); // this will be done last
 	glRotatef(90, 1, 0, 0);
 	gluCylinder(gluNewQuadric(), 0.7, 0.7, 6, 12, 12);
 	glPopMatrix();
@@ -365,7 +380,7 @@ void drawLowerBody()
 	glPushMatrix();
 	glScalef(lowerBodyD, lowerBodyD, lowerBodyD);
 	glRotatef(-90, 0, 1.0, 0);
-	gluCylinder(gluNewQuadric(), 0.7,0.7, 0.5, 20, 20);
+	gluCylinder(gluNewQuadric(), 0.7, 0.7, 0.5, 20, 20);
 	glPopMatrix();
 
 	// side wheel1
@@ -393,16 +408,16 @@ void drawCannon()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, robotArm_mat_specular);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotArm_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
-	
+
 	//  Gun
 	glTranslatef(-1.5, 4, 2.5);
 	glRotatef(shoulderAngle, 1, 0, 0);
 	glPushMatrix();
 	glRotatef(90, 0, 1, 0);
 	gluCylinder(gluNewQuadric(), 1.5, 1.5, 3, 20, 20);
-	glTranslatef(0, 0,3);
+	glTranslatef(0, 0, 3);
 	glPushMatrix();
-		gluDisk(gluNewQuadric(), 0, 1.5, 20, 20);
+	gluDisk(gluNewQuadric(), 0, 1.5, 20, 20);
 	glPopMatrix();
 	glTranslatef(0, 0, -3);
 	glPushMatrix();
@@ -410,30 +425,30 @@ void drawCannon()
 	glPopMatrix();
 	glTranslatef(-0.5, 0, 2);
 	glPushMatrix();
-		glRotatef(90, 1, 0,0);
-		gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
-		glTranslatef(0, 0, 4.5);
-		glPushMatrix();
-		gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
-		glPopMatrix();
+	glRotatef(90, 1, 0, 0);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
+	glTranslatef(0, 0, 4.5);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
+	glPopMatrix();
 	glPopMatrix();
 	glTranslatef(0, 0, -1);
 	glPushMatrix();
-		glRotatef(90, 1, 0, 0);
-		gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
-		glTranslatef(0, 0, 4.5);
-		glPushMatrix();
-		gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
-		glPopMatrix();
+	glRotatef(90, 1, 0, 0);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
+	glTranslatef(0, 0, 4.5);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
+	glPopMatrix();
 	glPopMatrix();
 	glTranslatef(1, 0, 0.5);
 	glPushMatrix();
-		glRotatef(90, 1, 0, 0);
-		gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
-		glTranslatef(0,0,4.5);
-		glPushMatrix();
-		gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
-		glPopMatrix();
+	glRotatef(90, 1, 0, 0);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 5, 20, 20);
+	glTranslatef(0, 0, 4.5);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 0.5, 20, 20);
+	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
 	glMaterialfv(GL_FRONT, GL_AMBIENT, gun_mat_ambient);
@@ -441,7 +456,7 @@ void drawCannon()
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, gun_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SHININESS, gun_mat_shininess);
 
-	
+
 
 
 
@@ -453,49 +468,49 @@ void drawTower() {
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
 	glRotatef(-45, 0, 0, 1);
-	glPushMatrix(); 
-		gluCylinder(gluNewQuadric(), 3,3,1 ,4, 4);
-		glPushMatrix(); 
-			gluDisk(gluNewQuadric(), 0, 3, 4,4);
-			glPushMatrix();
-			glTranslatef(0, 0, -4);
-			
-			glPushMatrix();
-			glRotatef(180, 0, 0, 1);
-			drawTowerCannon();
-			glPopMatrix();
-					
-			glPopMatrix(); 
-		glPopMatrix(); 
-		
-		glPushMatrix();
-			glTranslatef(-3.5, 3.5, 0.5);
-			glRotatef(90, 1, 1, 0);
-			gluCylinder(gluNewQuadric(), 0.5, 0.5, 10, 20, 20);
-			glPushMatrix();
-				glRotatef(robotAngle, 0, 0, 1);
-				gluCylinder(gluNewQuadric(), 2, 2, 1,12, 12);
-				glPushMatrix();
-					gluDisk(gluNewQuadric(), 0, 2, 12, 12);
-				glPopMatrix();
-				glPushMatrix();
-					glTranslatef(0, 0, 1);
-					gluDisk(gluNewQuadric(), 0, 2, 12, 12);
-				glPopMatrix();
-			glPopMatrix();
-			glPushMatrix();
-			glTranslatef(0,0,9);
-				glRotatef(robotAngle, 0, 0, 1);	
-				gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
-				glPushMatrix();
-					gluDisk(gluNewQuadric(), 0, 2,12, 12);
-				glPopMatrix();
-				glPushMatrix();
-				glTranslatef(0, 0, 1);
-					gluDisk(gluNewQuadric(), 0, 2, 20, 20);
-				glPopMatrix();
-			glPopMatrix();
-		glPopMatrix();	
+	glPushMatrix();
+	gluCylinder(gluNewQuadric(), 3, 3, 1, 4, 4);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 3, 4, 4);
+	glPushMatrix();
+	glTranslatef(0, 0, -4);
+
+	glPushMatrix();
+	glRotatef(180, 0, 0, 1);
+	drawTowerCannon();
+	glPopMatrix();
+
+	glPopMatrix();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-3.5, 3.5, 0.5);
+	glRotatef(90, 1, 1, 0);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 10, 20, 20);
+	glPushMatrix();
+	glRotatef(robotAngle, 0, 0, 1);
+	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 0, 1);
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+	glPopMatrix();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 0, 9);
+	glRotatef(robotAngle, 0, 0, 1);
+	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 0, 1);
+	gluDisk(gluNewQuadric(), 0, 2, 20, 20);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
 	glPopMatrix();
 }
 
@@ -506,58 +521,58 @@ void drawTowerCannon() {
 	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
 
 	glPushMatrix();
-		gluCylinder(gluNewQuadric(), 1, 3, 4, 4, 4);
-		glRotatef(wheelRot, 1, 1, 0);
-		glPushMatrix();
-		glTranslatef(0, 0, -1);
-		gluSphere(gluNewQuadric(), 1, 20, 20);
-			glPushMatrix(); 
-			glTranslatef(2, -2, -1);
-				glRotatef(-90, 1, 1, 0);
-				gluCylinder(gluNewQuadric(), 2, 1.5, 5, 4, 4);
-				glPushMatrix(); 
-					gluDisk(gluNewQuadric(), 0, 2, 4,4);
-					glPushMatrix(); 
-						glTranslatef(1,-1,-1);
-						glRotatef(-90, 1, 1, 0);
-						gluCylinder(gluNewQuadric(), 3, 3, 2.8, 20, 20);
+	gluCylinder(gluNewQuadric(), 1, 3, 4, 4, 4);
+	glRotatef(wheelRot, 1, 1, 0);
+	glPushMatrix();
+	glTranslatef(0, 0, -1);
+	gluSphere(gluNewQuadric(), 1, 20, 20);
+	glPushMatrix();
+	glTranslatef(2, -2, -1);
+	glRotatef(-90, 1, 1, 0);
+	gluCylinder(gluNewQuadric(), 2, 1.5, 5, 4, 4);
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 2, 4, 4);
+	glPushMatrix();
+	glTranslatef(1, -1, -1);
+	glRotatef(-90, 1, 1, 0);
+	gluCylinder(gluNewQuadric(), 3, 3, 2.8, 20, 20);
 
-						glPushMatrix();
-							gluDisk(gluNewQuadric(), 0, 3, 20, 20);
-						glPopMatrix(); 
+	glPushMatrix();
+	gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+	glPopMatrix();
 
-						glPushMatrix();
-							glTranslatef(0,0,2.9);
-							gluDisk(gluNewQuadric(), 0, 3, 20, 20);
-						glPopMatrix();
-					glPopMatrix(); 
-				glPopMatrix(); 
-				glPushMatrix();
-					glTranslatef(0, 0,5);
-					gluDisk(gluNewQuadric(), 0, 1.5, 4, 4);
-					glPushMatrix();
-						gluCylinder(gluNewQuadric(), 1, 1, 0.5, 20, 20);
-						glPushMatrix();
-						glTranslatef(0, 0, 0.5);
-						gluDisk(gluNewQuadric(), 0, 1,20, 20);
-							glPushMatrix();
-								glTranslatef(-0.4, 0.4, 0);
-								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
-							glPopMatrix();
-							glPushMatrix();
-								glTranslatef(0.4, -0.4, 0);
-								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
-							glPopMatrix();
-							glPushMatrix();
-								
-								gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
-							glPopMatrix();
-						glPopMatrix();
-					glPopMatrix(); 
-				glPopMatrix();
-			glPopMatrix(); 
-		glPopMatrix();
-	glPopMatrix(); 
+	glPushMatrix();
+	glTranslatef(0, 0, 2.9);
+	gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0, 0, 5);
+	gluDisk(gluNewQuadric(), 0, 1.5, 4, 4);
+	glPushMatrix();
+	gluCylinder(gluNewQuadric(), 1, 1, 0.5, 20, 20);
+	glPushMatrix();
+	glTranslatef(0, 0, 0.5);
+	gluDisk(gluNewQuadric(), 0, 1, 20, 20);
+	glPushMatrix();
+	glTranslatef(-0.4, 0.4, 0);
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.4, -0.4, 0);
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+	glPopMatrix();
+	glPushMatrix();
+
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
 }
 
 
@@ -582,9 +597,9 @@ void reshape(int w, int h)
 bool stop = false;
 
 void aimDown(void) {
-	wheelRot += 1; 
+	wheelRot += 1;
 	if (wheelRot > 30)
-		wheelRot -=1;
+		wheelRot -= 1;
 	glutPostRedisplay();
 }
 void aimUp(void) {
@@ -601,11 +616,18 @@ void keyboard(unsigned char key, int x, int y)
 	case 't':
 
 		break;
+	case 'f':
+		laserV.laserXPos = xPos;
+		laserV.laserYPos = yPos;
+		laserV.laserZPos = zPos;
+		laserV.laserAngle = robotAngle;
+		laserV.fired = 1;
+		break;
 	case 'w':
 		robotAngle += 2.0;
 		if (robotAngle >= 360) {
 			robotAngle = 0;
-			
+
 		}
 		if (robotAngle2 >= 360) {
 			robotAngle2 = 0;
@@ -710,7 +732,7 @@ void mouse(int button, int state, int x, int y)
 	case GLUT_LEFT_BUTTON:
 		if (state == GLUT_DOWN)
 		{
-			glutIdleFunc(aimUp); 
+			glutIdleFunc(aimUp);
 		}
 		if (state == GLUT_UP) {
 			glutIdleFunc(NULL);
@@ -744,3 +766,35 @@ void mouseMotionHandler(int xMouse, int yMouse)
 	glutPostRedisplay();   // Trigger a window redisplay
 }
 
+void drawLaser(int on) {
+
+	if (on == 1) {
+		glPushMatrix();
+		glTranslatef(laserV.laserXPos, laserV.laserYPos, laserV.laserZPos);
+		glRotatef(180, 0, 1, 0);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
+		glPopMatrix();
+	}
+}
+
+void fireLaser(int on) {
+
+	if (on == 1) {
+
+		if (laserV.laserTimer > 0) {
+			laserV.laserXPos -= 0.5 * sin((laserV.laserAngle * M_PI) / 180);
+			laserV.laserZPos -= 0.5 * cos((laserV.laserAngle * M_PI) / 180);
+			laserV.laserTimer -= 0.01;
+
+		}
+		else {
+			laserV.laserTimer = 100;
+			laserV.laserXPos = xPos;
+			laserV.laserYPos = yPos;
+			laserV.laserZPos = zPos;
+			laserV.fired = 0;
+		}
+
+	}
+}
