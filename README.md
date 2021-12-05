@@ -1,13 +1,13 @@
 # Robot
 Files needed to run:
 
-## Justtin & Als instance
+## Majuths instance
 assignment3Main.cpp
 mechBotAnimator.h
 mechBotAnimator.cpp
 subdivcurve.h
 
-## Majuths instance
+## Justtin & Als instance
 NewRobot.cpp
 VECTOR3D.h
 QuadMesh.cpp
