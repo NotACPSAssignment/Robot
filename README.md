@@ -1,7 +1,7 @@
 # Robot
 Files needed to run:
 
-## Justtins instance
+## Justtin & Als instance
 assignment3Main.cpp
 mechBotAnimator.h
 mechBotAnimator.cpp
