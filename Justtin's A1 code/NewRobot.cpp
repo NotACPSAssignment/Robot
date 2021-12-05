@@ -17,7 +17,6 @@
 #include "VECTOR3D.h"
 #include "cube.h"
 #include "QuadMesh.h"
-#include "stb_image.h"
 
 
 //
