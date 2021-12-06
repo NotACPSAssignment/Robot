@@ -73,9 +73,9 @@ float wheelRot = 0;
 //Laser variables
 struct laserValues {
 	float laserXPos, laserYPos, laserZPos, laserTimer, laserAngle;
+	int fired;
 }laserV;
 
-int fired = 0;
 // Lighting/shading and material properties for robot - upcoming lecture - just copy for now
 
 GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
@@ -238,16 +238,17 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(glutWindowWidth, glutWindowHeight);
 	glutInitWindowPosition(200, 30);
-	glutCreateWindow("3D Hierarchical Example");
+	window3D = glutCreateWindow("Assignment 3");
 
 	initSubdivisionCurve();
 	initControlPoints();
 
 
 	// Initialize GL
-	initOpenGL(vWidth, vHeight);
+	initOpenGL(glutWindowWidth, glutWindowHeight);
 
 	// Register callback functions
+	glutPositionWindow(200, 30);
 	glutDisplayFunc(display3D);
 	glutReshapeFunc(reshape3D);
 	//glutDisplayFunc(display);
@@ -255,7 +256,7 @@ int main(int argc, char** argv)
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMotionHandler);
 	glutKeyboardFunc(keyboard);
-	glutSpecialFunc(functionKeys);
+	glutSpecialFunc(specialKeyHandler);
 
 	// Initialize the 3D system
 	init3DSurfaceWindow();
@@ -881,7 +882,7 @@ void animationHandler(int param)
 }
 
 
-
+/*
 // Callback, handles input from the keyboard, function and arrow keys
 void functionKeys(int key, int x, int y)
 {
@@ -905,6 +906,7 @@ void functionKeys(int key, int x, int y)
 
 	glutPostRedisplay();   // Trigger a window redisplay
 }
+*/
 
 
 // Mouse button callback - use only if you want to 
@@ -978,7 +980,7 @@ void fireLaser(int on) {
 			laserV.laserXPos = xPos;
 			laserV.laserYPos = yPos;
 			laserV.laserZPos = zPos;
-			fired = 0;
+			laserV.fired = 0;
 		}
 
 	}
@@ -1125,8 +1127,8 @@ void display3D()
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-	fireLaser(fired);
-	drawLaser(fired);
+	fireLaser(laserV.fired);
+	drawLaser(laserV.fired);
 
 	glEnable(GL_TEXTURE_GEN_S);
 	glEnable(GL_TEXTURE_GEN_T);
@@ -1169,9 +1171,9 @@ void display3D()
 
 
 	glPushMatrix();
-	drawLaser(fired);
-	fireLaser(fired);
-	glTranslatef(xPos, 0.0, 10);
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
+	glTranslatef(towerX, 0.0, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	glBindTexture(GL_TEXTURE_2D, tex[2]);
@@ -1313,7 +1315,7 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserXPos = towerX;
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
-		fired = 1;
+		laserV.fired = 1;
 		break;
 		break;
 	case 'a':
@@ -1356,6 +1358,17 @@ void keyboard(unsigned char key, int x, int y)
 void specialKeyHandler(int key, int x, int y)
 {
 	switch (key) {
+	case GLUT_KEY_F1:
+		printf("Controls:\n");
+		printf("w: Move Forward\n");
+		printf("s: Move Backwards\n");
+		printf("a: Turn Left\n");
+		printf("d: Turn Right\n");
+		printf("z: Lower Arms\n");
+		printf("x: Raise Arms\n");
+		printf("v: Spin Cube\n");
+		printf("V: Stop Cube Spin\n");
+		break;
 	case GLUT_KEY_LEFT:
 		// add code here
 		towerX -= 0.5;
