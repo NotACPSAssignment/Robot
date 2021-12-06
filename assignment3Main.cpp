@@ -1,7 +1,6 @@
-//CPS511 Assignment 1
-//Justtin Hoang 500884336
+//CPS511 Assignment 3
+//Justtin Hoang 500884336, Majuth Kirakalaprathapan 500878999, Al Sagun
 //Section 011
-//Bonus: Additional Cannon arms
 
 #define _USE_MATH_DEFINES
 #define STB_IMAGE_IMPLEMENTATION
@@ -458,40 +457,7 @@ void drawBot()
 	drawRobot();
 	glPopMatrix();
 
-	/*
-	if (botType == CUBE)
-	{
-		glPushMatrix();
-		 glTranslatef(0.0, -0.5, 0.0);
-		 glRotatef(-90, 0.0, 1.0, 0.0);
-		 glScalef(1.0, 1.0, 3.0);
-		 glutSolidCube(cubeSize);
-		glPopMatrix();
-	}
-	else if (botType == SPHERE)
-	{
-		glPushMatrix();
-		glutSolidSphere(sphereRadius, 30, 30);
-		glPopMatrix();
-	}
-	else if (botType == WHEEL)
-	{
-		glPushMatrix();
-		glTranslatef(0.0, 0.0, -wheelThickness / 2.0);
-		glPushMatrix();
-		glRotatef(wheelRotation, 0.0, 0.0, 1.0);
-			glPushMatrix();
-				gluDisk(gluNewQuadric(), 0, wheelRadius, 20, 10);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(0, 0, wheelThickness);
-				gluDisk(gluNewQuadric(), 0, wheelRadius, 20, 10);
-			glPopMatrix();
-			gluCylinder(gluNewQuadric(),wheelRadius,wheelRadius,wheelThickness,30,30);
-		glPopMatrix();
-		glPopMatrix();
-	}
-	*/
+	
 	glPopMatrix();
 
 }
@@ -882,31 +848,6 @@ void animationHandler(int param)
 }
 
 
-/*
-// Callback, handles input from the keyboard, function and arrow keys
-void functionKeys(int key, int x, int y)
-{
-	// Help key
-	if (key == GLUT_KEY_F1)
-	{
-		printf("Controls:\n");
-		printf("w: Move Forward\n");
-		printf("s: Move Backwards\n");
-		printf("a: Turn Left\n");
-		printf("d: Turn Right\n");
-		printf("z: Lower Arms\n");
-		printf("x: Raise Arms\n");
-		printf("v: Spin Cube\n");
-		printf("V: Stop Cube Spin\n");
-	}
-	// Do transformations with arrow keys
-	//else if (...)   // GLUT_KEY_DOWN, GLUT_KEY_UP, GLUT_KEY_RIGHT, GLUT_KEY_LEFT
-	//{
-	//}
-
-	glutPostRedisplay();   // Trigger a window redisplay
-}
-*/
 
 
 // Mouse button callback - use only if you want to 
