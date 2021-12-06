@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stdio.h>
 #include <windows.h>
+#include <stdlib.h>
 #include <malloc.h>
 #include <GL/glut.h>
 #include <math.h>
@@ -12,6 +13,7 @@
 #include "mechBotAnimator.h"
 #include "subdivcurve.h"
 #include "QuadMesh.h"
+#include "RGBpixmap.h"
 
 enum BotType { CUBE, SPHERE, WHEEL };
 BotType botType = WHEEL;
@@ -39,12 +41,23 @@ float nonConvertedRobotAngle = 0.0;
 float robotAngle = 0.0;
 float robotAngle2 = 0.0;
 
+
 const int towerAngle =0;
+//struct for laser
 struct laserValues {
 	float laserXPos, laserYPos, laserZPos, laserTimer, laserAngle;
 	int fired;
 }laserV;
 
+//texture mapping stuff
+RGBpixmap pix1[4];
+GLuint textureId;
+int towerDMG = 0;
+static GLfloat textureMap1[64][64][3];
+static GLfloat textureMap2[64][64][3];
+static GLfloat textureMap3[64][64][3];
+static GLfloat textureMap4[64][64][3];
+static GLuint tex[4];
 
 
 float bulletx; 
@@ -132,6 +145,9 @@ QuadMesh* groundMesh = NULL;
 
 // Prototypes for functions in this module
 
+//Texture Map Functions
+
+
 void initOpenGL(int w, int h);
 
 void display(void);
@@ -170,20 +186,10 @@ void fireLaser(int on);
 
 void drawLaser(int on);
 
-
-void makeTextureMap();
-
 void makeTextures();
 
-void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
 
-static GLfloat textureMap1[64][64][3];
 
-static GLfloat textureMap2[64][64][3];
-
-static GLfloat textureMap3[64][64][3];
-
-static GLuint tex[3];
 
 // Light properties
 
@@ -223,13 +229,13 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, (char**)argv);
 
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(glutWindowWidth, glutWindowHeight);
 	glutInitWindowPosition(50, 100);
 
 	// Initialize GL
 
-	initOpenGL(glutWindowWidth, glutWindowHeight);
+	//initOpenGL(glutWindowWidth, glutWindowHeight);
 
 
 
@@ -362,60 +368,6 @@ void initOpenGL(int w, int h)
 
 {
 
-	// Set up and enable lighting
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-
-	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
-
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-
-	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
-
-
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
-
-	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
-
-
-	glEnable(GL_LIGHTING);
-
-	glEnable(GL_LIGHT0);
-
-	glEnable(GL_LIGHT1); // This second light is currently off
-
-	glEnable(GL_TEXTURE_2D);
-
-	makeTextureMap();
-
-	makeTextures();
-
-
-	// Other OpenGL setup
-
-	glEnable(GL_DEPTH_TEST); // Remove hidded surfaces
-
-	glShadeModel(GL_SMOOTH); // Use smooth shading, makes boundaries between polygons harder to see
-
-	glClearColor(0.4F, 0.4F, 0.4F, 0.0F); // Color and depth for glClear
-
-	glClearDepth(1.0f);
-
-	glEnable(GL_NORMALIZE); // Renormalize normal vectors
-
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Nicer perspective
-
-
-	glMatrixMode(GL_MODELVIEW);
-
-	glLoadIdentity();
-
-
-
 	// Other initializatuion
 
 	// Set up ground quad mesh
@@ -443,115 +395,89 @@ void initOpenGL(int w, int h)
 
 }
 
-void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b) {
-
-	col[0] = r;
-
-	col[1] = g;
-
-	col[2] = b;
-
-}
-
-
-void makeTextureMap()
-
-{
-
-	double range;
-
-	for (int i = 0; i < 64; i++)
-
-		for (int j = 0; j < 64; j++) {
-
-			range = ((double)(rand() % 200 + -100) / (double)1000);
-
-			assignColor(textureMap1[i][j], 0.500 + range, 0.500 + range, 0.500 + range);
-
-		}
-
-	for (int i = 0; i < 64; i++)
-
-		for (int j = 0; j < 64; j++) {
-
-			range = ((double)(rand() % 200 + -100) / (double)1000);
-
-			assignColor(textureMap2[i][j], 0.0, 0.500 + range, 0.0);
-
-		}
-
-	for (int i = 0; i < 64; i++)
-
-		for (int j = 0; j < 64; j++) {
-
-			range = ((double)(rand() % 200 + -100) / (double)1000);
-
-			assignColor(textureMap3[i][j], 0.500 + range, 0.0, 0.0);
-
-		}
-
-}
-
-
-
 void makeTextures()
-
 {
-
 
 	glGenTextures(2, tex);
 
-
+	/*
 	//Texture mapping for the Quadmesh
-
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap1); */
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap1);
+	pix1[2].readBMPFile("grass.bmp");
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // store pixels by byte	
+	glBindTexture(GL_TEXTURE_2D, tex[0]); // select current texture (0)
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D( // initialize texture
+		GL_TEXTURE_2D, // texture is 2-d
+		0, // resolution level 0
+		GL_RGB, // internal format
+		pix1[2].nCols, // image width
+		pix1[2].nRows, // image height
+		0, // no border
+		GL_RGB, // my format
+		GL_UNSIGNED_BYTE, // my type
+		pix1[2].pixel); // the pixels*/
 
-
+	/*
 	//Texture mapping for the Player submarine
-
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap2);
+	*/
 
-
-	//Texture mapping for the Player submarine
-
-	glBindTexture(GL_TEXTURE_2D, tex[2]);
-
+	pix1[1].readBMPFile("redstone.bmp");
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // store pixels by byte	
+	glBindTexture(GL_TEXTURE_2D, tex[1]); // select current texture (0)
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D( // initialize texture
+		GL_TEXTURE_2D, // texture is 2-d
+		0, // resolution level 0
+		GL_RGB, // internal format
+		pix1[1].nCols, // image width
+		pix1[1].nRows, // image height
+		0, // no border
+		GL_RGB, // my format
+		GL_UNSIGNED_BYTE, // my type
+		pix1[1].pixel); // the pixels*/
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap3);
-
+	pix1[0].readBMPFile("diamond.bmp");
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // store pixels by byte	
+	glBindTexture(GL_TEXTURE_2D, tex[3]); // select current texture (0)
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D( // initialize texture
+		GL_TEXTURE_2D, // texture is 2-d
+		0, // resolution level 0
+		GL_RGB, // internal format
+		pix1[0].nCols, // image width
+		pix1[0].nRows, // image height
+		0, // no border
+		GL_RGB, // my format
+		GL_UNSIGNED_BYTE, // my type
+		pix1[0].pixel); // the pixels*/
 }
 
 void initSubdivisionCurve() {
@@ -711,96 +637,6 @@ void mouseHoverHandler(int xMouse, int yMouse)
 }
 */
 
-void keyboardHandler(unsigned char key, int x, int y)
-{
-	switch (key) {
-	case 'q':
-	case 'Q':
-	case 27:
-		// Esc, q, or Q key = Quit 
-		exit(0);
-		break;
-	case 32: 
-		laserV.laserXPos = bulletx;
-		laserV.laserYPos = bullety;
-		laserV.laserZPos = bulletz;
-		laserV.laserAngle = towerAngle;
-		laserV.fired = 1;
-		break;
-		break; 
-	case 'a':
-		// Add code to create timer and call animation handler
-		glutSetWindow(window3D);
-		animationHandler(1);
-		// Use this to set to 3D window and redraw it
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 'r':
-		// reset object position at beginning of curve
-		currentCurvePoint = 0;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 'c':
-		botType = CUBE;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 's':
-		botType = SPHERE;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 'w':
-		botType = WHEEL;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
-}
-
-void specialKeyHandler(int key, int x, int y)
-{
-	switch (key) {
-	case GLUT_KEY_LEFT:
-		// add code here
-		towerX -= 0.5;
-			robotAngle2 -= 30;
-		bulletx += robotMove * sin((towerAngle * M_PI) / 180);
-		bulletz += robotMove * cos((towerAngle * M_PI) / 180);
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case GLUT_KEY_RIGHT:
-		// add code here;
-		towerX += 0.5;
-		robotAngle2 += 30;
-		bulletx-= robotMove * sin((towerAngle * M_PI) / 180);
-		bulletz -= robotMove * cos((towerAngle * M_PI) / 180);
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	}
-	glutPostRedisplay();
-}
-
-
-void reshape(int w, int h)
-{
-	glutWindowWidth = (GLsizei)w;
-	glutWindowHeight = (GLsizei)h;
-	glViewport(0, 0, glutWindowWidth, glutWindowHeight);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(wvLeft, wvRight, wvBottom, wvTop);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
 
 
 /************************************************************************************
@@ -844,6 +680,8 @@ void init3DSurfaceWindow()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(0.0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	makeTextures();
 }
 
 
@@ -904,36 +742,51 @@ void display3D()
 	glLoadIdentity();
 	gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+
+	//glBindTexture(GL_TEXTURE_2D, tex[0]);
+	glPushMatrix();
+
 	drawGround();
+	//groundMesh->DrawMesh(meshSize);
+	glPopMatrix();
+	
 	draw3DSubdivisionCurve();
 	draw3DControlPoints();
+
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	drawBot();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	drawBot();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	drawBot();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 10.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 4.0);
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	drawBot();
 	glPopMatrix();
 
-
+	
 	glPushMatrix();
 	drawLaser(laserV.fired);
 	fireLaser(laserV.fired);
 	glTranslatef(towerX, 0.0, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
+	glBindTexture(GL_TEXTURE_2D, tex[3]);
 	drawTower();
 	glPopMatrix();
 	glutSwapBuffers();
@@ -995,10 +848,7 @@ void drawRobot();
 void drawBot()
 {
 	glPushMatrix();
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, robotBody_mat_specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, robotBody_mat_shininess);
+	
 	glTranslatef(0, 1.0, 0);
 
 
@@ -1066,10 +916,7 @@ void drawTower()
 
 void drawGround() {
 	glPushMatrix();
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, groundMat_ambient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, groundMat_specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, groundMat_diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, groundMat_shininess);
+	
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);
 	glVertex3f(-120.0f, -1.0f, -120.0f);
@@ -1260,10 +1107,7 @@ void drawRobot()
 
 void drawBody()
 {
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+	
 
 	//Waist
 	glPushMatrix();
@@ -1300,10 +1144,7 @@ void drawBody()
 void drawHead()
 {
 	// Set robot material properties per body part. Can have seperate material properties for each part
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+	
 
 	glPushMatrix();
 	// Position head with respect to parent (body)
@@ -1338,10 +1179,7 @@ void drawHead()
 
 void drawLowerBody()
 {
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotLowerBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotLowerBody_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotLowerBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotLowerBody_mat_shininess);
+	
 
 	glPushMatrix();
 	glTranslatef(0, -0.75 * robotBodyLength, 0.0); // this will be done last
@@ -1393,10 +1231,7 @@ void drawLowerBody()
 
 void drawCannon()
 {
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotArm_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotArm_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotArm_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
+	
 
 	//  Gun
 	glTranslatef(-1.5, 4, 2.5);
@@ -1440,27 +1275,11 @@ void drawCannon()
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
-	glMaterialfv(GL_FRONT, GL_AMBIENT, gun_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, gun_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, gun_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, gun_mat_shininess);
-
-
-
-
-
 }
 
 void drawTower() {
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
-
+	
 	glRotatef(-45, 0, 0, 1);
 
 	glPushMatrix();
@@ -1552,15 +1371,6 @@ void drawTower() {
 
 
 void drawTowerCannon() {
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotArm_mat_ambient);
-
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotArm_mat_specular);
-
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotArm_mat_diffuse);
-
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
-
 
 	glPushMatrix();
 
@@ -1752,6 +1562,97 @@ void fireLaser(int on) {
 
 	glutPostRedisplay();
 
+}
+
+
+
+void keyboardHandler(unsigned char key, int x, int y)
+{
+	switch (key) {
+	case 'q':
+	case 'Q':
+	case 27:
+		// Esc, q, or Q key = Quit 
+		exit(0);
+		break;
+	case 32:
+		laserV.laserXPos = towerX;
+		laserV.laserZPos = bulletz;
+		laserV.laserAngle = towerAngle;
+		laserV.fired = 1;
+		break;
+		break;
+	case 'a':
+		// Add code to create timer and call animation handler
+		glutSetWindow(window3D);
+		animationHandler(1);
+		// Use this to set to 3D window and redraw it
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	case 'r':
+		// reset object position at beginning of curve
+		currentCurvePoint = 0;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	case 'c':
+		botType = CUBE;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	case 's':
+		botType = SPHERE;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	case 'w':
+		botType = WHEEL;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	default:
+		break;
+	}
+	glutPostRedisplay();
+}
+
+void specialKeyHandler(int key, int x, int y)
+{
+	switch (key) {
+	case GLUT_KEY_LEFT:
+		// add code here
+		towerX -= 0.5;
+		robotAngle2 -= 30;
+		bulletx += robotMove * sin((towerAngle * M_PI) / 180);
+		bulletz = bulletz;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	case GLUT_KEY_RIGHT:
+		// add code here;
+		towerX += 0.5;
+		robotAngle2 += 30;
+		bulletx -= robotMove * sin((towerAngle * M_PI) / 180);
+		bulletz = bulletz;
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		break;
+	}
+	glutPostRedisplay();
+}
+
+
+void reshape(int w, int h)
+{
+	glutWindowWidth = (GLsizei)w;
+	glutWindowHeight = (GLsizei)h;
+	glViewport(0, 0, glutWindowWidth, glutWindowHeight);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(wvLeft, wvRight, wvBottom, wvTop);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 
