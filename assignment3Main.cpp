@@ -1,5 +1,5 @@
 //CPS511 Assignment 3
-//Justtin Hoang 500884336, Majuth Kirakalaprathapan 500878999, Al Sagun
+//Justtin Hoang 500884336, Majuth Kirakalaprathapan 500878999, Al Sagun 500882340
 //Section 011
 
 #define _USE_MATH_DEFINES
