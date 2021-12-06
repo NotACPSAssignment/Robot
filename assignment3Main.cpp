@@ -35,14 +35,14 @@ float robotBodyLength = 10.0;
 float robotBodyDepth = 6.0;
 float headDimension = 0.5 * robotBodyLength;
 float upperArmLength = robotBodyLength / 2;
-float upperArmWidth = 0.125*robotBodyWidth;
+float upperArmWidth = 0.125 * robotBodyWidth;
 float gunLength = upperArmLength / 3.0;
 float gunWidth = upperArmWidth * 2;
 float gunDepth = upperArmWidth * 2;
 float HeadLength = 0.5 * robotBodyLength;
 float lowerBodyD = 0.5 * robotBodyLength;
 float baseWidth = 2 * robotBodyWidth;
-float baseLength = 0.25*lowerBodyD;
+float baseLength = 0.25 * lowerBodyD;
 
 
 // Control Robot body rotation on base
@@ -116,7 +116,7 @@ int currentButton;
 
 
 // A flat open mesh
-QuadMesh *groundMesh = NULL;
+QuadMesh* groundMesh = NULL;
 
 // Structure defining a bounding box, currently unused
 typedef struct BoundingBox {
@@ -231,7 +231,7 @@ GLfloat light_diffuse1[] = { 1.0, 1.0, 1.0, 1.0 };
 // 
 GLdouble spin = 0.0;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	// Initialize GLUT
 	glutInit(&argc, argv);
@@ -243,7 +243,7 @@ int main(int argc, char **argv)
 	initSubdivisionCurve();
 	initControlPoints();
 
-	
+
 	// Initialize GL
 	initOpenGL(vWidth, vHeight);
 
@@ -294,7 +294,7 @@ void initOpenGL(int w, int h)
 	glClearDepth(1.0f);
 	glEnable(GL_NORMALIZE);    // Renormalize normal vectors 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);   // Nicer perspective
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -405,7 +405,7 @@ void makeTextures()
 		GL_UNSIGNED_BYTE, // my type
 		pix1[1].pixel); // the pixels*/
 
-	
+
 	pix1[0].readBMPFile("diamond.bmp");
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // store pixels by byte	
 	glBindTexture(GL_TEXTURE_2D, tex[2]); // select current texture (0)
@@ -527,12 +527,12 @@ void drawBody()
 	//upper body
 	glPushMatrix();
 	glTranslatef(0.0, 6, 0.0); // this will be done last
-	glScalef(robotBodyWidth, robotBodyLength*0.5, robotBodyDepth * 0.7);
+	glScalef(robotBodyWidth, robotBodyLength * 0.5, robotBodyDepth * 0.7);
 	glRotatef(90, 1, 0, 0);
 	gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 12, 12);
 	glTranslatef(2, 1, 0);
 	glPushMatrix();
-	gluDisk(gluNewQuadric(), 0, 0.5, 12, 12);
+	//gluDisk(gluNewQuadric(), 0, 0.5, 12, 12);
 	glPopMatrix();
 	glPopMatrix();
 
@@ -550,11 +550,11 @@ void drawBody()
 
 void drawHead()
 {
-	
+
 
 	glPushMatrix();
 	// Position head with respect to parent (body)
-	glTranslatef(0, 0.65*robotBodyLength + 0.4*headDimension, -1.5); // this will be done last
+	glTranslatef(0, 0.65 * robotBodyLength + 0.4 * headDimension, -1.5); // this will be done last
 
 	// Build Head
 	glPushMatrix();
@@ -585,10 +585,10 @@ void drawHead()
 
 void drawLowerBody()
 {
-	
+
 
 	glPushMatrix();
-	glTranslatef(0, -0.75*robotBodyLength, 0.0); // this will be done last
+	glTranslatef(0, -0.75 * robotBodyLength, 0.0); // this will be done last
 
 	// Bolt
 	glPushMatrix();
@@ -636,7 +636,7 @@ void drawLowerBody()
 
 void drawCannon()
 {
-		//  Gun
+	//  Gun
 	glTranslatef(-1.5, 4, 2.5);
 	glRotatef(shoulderAngle, 1, 0, 0);
 	glPushMatrix();
@@ -688,13 +688,13 @@ void drawCannon()
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
-	
-	
+
+
 }
 
 void drawTower() {
-	
-	
+
+
 	glRotatef(-45, 0, 0, 1);
 	glPushMatrix();
 	gluCylinder(gluNewQuadric(), 3, 3, 1, 4, 4);
@@ -720,7 +720,7 @@ void drawTower() {
 	glRotatef(robotAngle, 0, 0, 1);
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 	glPushMatrix();
-	glRotatef(180,1,0,0);
+	glRotatef(180, 1, 0, 0);
 	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
 	glPopMatrix();
 	glPushMatrix();
@@ -733,7 +733,7 @@ void drawTower() {
 	glRotatef(robotAngle, 0, 0, 1);
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 	glPushMatrix();
-	glRotatef(180,1,0,0);
+	glRotatef(180, 1, 0, 0);
 	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
 	glPopMatrix();
 	glPushMatrix();
@@ -746,7 +746,7 @@ void drawTower() {
 }
 
 void drawTowerCannon() {
-	
+
 
 	glPushMatrix();
 	gluCylinder(gluNewQuadric(), 1, 3, 4, 4, 4);
@@ -754,11 +754,11 @@ void drawTowerCannon() {
 	glPushMatrix();
 	if (towerDMG == 1) {
 		glRotatef(45, 1, 0, 0);
-		
+
 	}
 	else if (towerDMG == 2) {
 		glRotatef(-25, 1, 0, 0);
-		
+
 	}
 	else if (towerDMG == 3) {
 		glRotatef(90, 0, 1, 0);
