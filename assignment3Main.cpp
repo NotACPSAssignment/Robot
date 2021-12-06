@@ -232,34 +232,9 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(glutWindowWidth, glutWindowHeight);
 	glutInitWindowPosition(50, 100);
-
-	// Initialize GL
-
-	//initOpenGL(glutWindowWidth, glutWindowHeight);
-
-
-
-	/*
-	// The 2D Window
-	window2D = glutCreateWindow("Animation Path Designer");
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	*/
-
-	// Initialize the 2D profile curve system
-	//init2DCurveWindow();
+	
 	initSubdivisionCurve();
 	initControlPoints();
-
-	/*
-	// A few input handlers
-	glutMouseFunc(mouseButtonHandler);
-	glutMotionFunc(mouseMotionHandler);
-	glutPassiveMotionFunc(mouseHoverHandler);
-	glutKeyboardFunc(keyboardHandler);
-	glutSpecialFunc(specialKeyHandler);
-	*/
-
 
 	// The 3D Window
 	window3D = glutCreateWindow("Assignment 3");
@@ -681,7 +656,6 @@ void init3DSurfaceWindow()
 	glLoadIdentity();
 	gluLookAt(0.0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-	makeTextures();
 }
 
 
