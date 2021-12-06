@@ -1,10 +1,17 @@
+#define _USE_MATH_DEFINES
+#define STB_IMAGE_IMPLEMENTATION
 #include <stdio.h>
 #include <windows.h>
+#include <malloc.h>
 #include <GL/glut.h>
 #include <math.h>
 #include <string.h>
+#include <utility>
+#include <vector>
+#include "VECTOR3D.h"
 #include "mechBotAnimator.h"
 #include "subdivcurve.h"
+#include "QuadMesh.h"
 
 enum BotType { CUBE, SPHERE, WHEEL };
 BotType botType = WHEEL;
@@ -53,17 +60,137 @@ GLfloat groundMat_specular[] = { 0.01, 0.01, 0.01, 1.0 };
 GLfloat groundMat_diffuse[] = { 0.4, 0.4, 0.7, 1.0 };
 GLfloat groundMat_shininess[] = { 1.0 };
 
-GLfloat light_position0[] = { 4.0, 8.0, 8.0, 1.0 };
 GLfloat light_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
 
-GLfloat light_position1[] = { -4.0, 8.0, 8.0, 1.0 };
 GLfloat light_diffuse1[] = { 1.0, 1.0, 1.0, 1.0 };
 
-GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat model_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
 
 // 
 GLdouble spin = 0.0;
+
+
+
+// just by changing robot body scale
+
+
+
+int fired = 0;
+
+// Lighting/shading and material properties for robot - upcoming lecture - just copy for now
+
+
+GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
+
+GLfloat robotBody_mat_specular[] = { 0.45f,0.55f,0.45f,1.0f };
+
+GLfloat robotBody_mat_diffuse[] = { 0.1f,0.35f,0.1f,1.0f };
+
+GLfloat robotBody_mat_shininess[] = { 32.0F };
+
+
+
+GLfloat robotArm_mat_ambient[] = { 0.0215f, 0.1745f, 0.0215f, 0.55f };
+
+GLfloat robotArm_mat_diffuse[] = { 0.5f,0.0f,0.0f,1.0f };
+
+GLfloat robotArm_mat_specular[] = { 0.7f, 0.6f, 0.6f, 1.0f };
+
+GLfloat robotArm_mat_shininess[] = { 32.0F };
+
+
+GLfloat gun_mat_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+GLfloat gun_mat_diffuse[] = { 0.01f,0.0f,0.01f,0.01f };
+
+GLfloat gun_mat_specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+
+GLfloat gun_mat_shininess[] = { 100.0F };
+
+
+GLfloat robotLowerBody_mat_ambient[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
+GLfloat robotLowerBody_mat_diffuse[] = { 0.4f, 0.4f, 0.4f, 1.0f };
+
+GLfloat robotLowerBody_mat_specular[] = { 0.774597f, 0.774597f, 0.774597f, 1.0f };
+
+GLfloat robotLowerBody_mat_shininess[] = { 76.8F };
+
+
+QuadMesh* groundMesh = NULL;
+
+// Prototypes for functions in this module
+
+void initOpenGL(int w, int h);
+
+void display(void);
+
+void reshape(int w, int h);
+
+void mouse(int button, int state, int x, int y);
+
+void mouseMotionHandler(int xMouse, int yMouse);
+
+void keyboard(unsigned char key, int x, int y);
+
+void functionKeys(int key, int x, int y);
+
+void animationHandler(int param);
+
+void drawRobot();
+
+void drawBody();
+
+void drawHead();
+
+void drawLowerBody();
+
+void drawCannon();
+
+void drawTower();
+
+void drawTowerCannon();
+
+void aimUp(void);
+
+void aimDown(void);
+
+void fireLaser(int on);
+
+void drawLaser(int on);
+
+
+void makeTextureMap();
+
+void makeTextures();
+
+void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
+
+static GLfloat textureMap1[64][64][3];
+
+static GLfloat textureMap2[64][64][3];
+
+static GLfloat textureMap3[64][64][3];
+
+static GLuint tex[3];
+
+// Light properties
+
+GLfloat light_position0[] = { -4.0F, 8.0F, 8.0F, 1.0F };
+
+GLfloat light_position1[] = { 4.0F, 8.0F, 8.0F, 1.0F };
+
+GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+
+GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+
+GLfloat light_ambient[] = { 0.2F, 0.2F, 0.2F, 1.0F };
+
+GLfloat model_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
+
+
+
+int meshSize = 16;
+
 
 // The 2D animation path curve is a subdivision curve
 SubdivisionCurve subcurve;
@@ -87,6 +214,12 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(glutWindowWidth, glutWindowHeight);
 	glutInitWindowPosition(50, 100);
+
+	// Initialize GL
+
+	initOpenGL(glutWindowWidth, glutWindowHeight);
+
+
 
 	/*
 	// The 2D Window
@@ -222,6 +355,202 @@ void drawControlPoints() {
 }
 
 */
+
+void initOpenGL(int w, int h)
+
+{
+
+	// Set up and enable lighting
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+
+
+	glEnable(GL_LIGHTING);
+
+	glEnable(GL_LIGHT0);
+
+	glEnable(GL_LIGHT1); // This second light is currently off
+
+	glEnable(GL_TEXTURE_2D);
+
+	makeTextureMap();
+
+	makeTextures();
+
+
+	// Other OpenGL setup
+
+	glEnable(GL_DEPTH_TEST); // Remove hidded surfaces
+
+	glShadeModel(GL_SMOOTH); // Use smooth shading, makes boundaries between polygons harder to see
+
+	glClearColor(0.4F, 0.4F, 0.4F, 0.0F); // Color and depth for glClear
+
+	glClearDepth(1.0f);
+
+	glEnable(GL_NORMALIZE); // Renormalize normal vectors
+
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Nicer perspective
+
+
+	glMatrixMode(GL_MODELVIEW);
+
+	glLoadIdentity();
+
+
+
+	// Other initializatuion
+
+	// Set up ground quad mesh
+
+	VECTOR3D origin = VECTOR3D(-16.0f, 0.0f, 16.0f);
+
+	VECTOR3D dir1v = VECTOR3D(1.0f, 0.0f, 0.0f);
+
+	VECTOR3D dir2v = VECTOR3D(0.0f, 0.0f, -1.0f);
+
+	groundMesh = new QuadMesh(meshSize, 32.0);
+
+	groundMesh->InitMesh(meshSize, origin, 32.0, 32.0, dir1v, dir2v);
+
+
+	VECTOR3D ambient = VECTOR3D(0.0f, 0.05f, 0.0f);
+
+	VECTOR3D diffuse = VECTOR3D(0.4f, 0.8f, 0.4f);
+
+	VECTOR3D specular = VECTOR3D(0.04f, 0.04f, 0.04f);
+
+	float shininess = 0.2;
+
+	groundMesh->SetMaterial(ambient, diffuse, specular, shininess);
+
+}
+
+void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b) {
+
+	col[0] = r;
+
+	col[1] = g;
+
+	col[2] = b;
+
+}
+
+
+void makeTextureMap()
+
+{
+
+	double range;
+
+	for (int i = 0; i < 64; i++)
+
+		for (int j = 0; j < 64; j++) {
+
+			range = ((double)(rand() % 200 + -100) / (double)1000);
+
+			assignColor(textureMap1[i][j], 0.500 + range, 0.500 + range, 0.500 + range);
+
+		}
+
+	for (int i = 0; i < 64; i++)
+
+		for (int j = 0; j < 64; j++) {
+
+			range = ((double)(rand() % 200 + -100) / (double)1000);
+
+			assignColor(textureMap2[i][j], 0.0, 0.500 + range, 0.0);
+
+		}
+
+	for (int i = 0; i < 64; i++)
+
+		for (int j = 0; j < 64; j++) {
+
+			range = ((double)(rand() % 200 + -100) / (double)1000);
+
+			assignColor(textureMap3[i][j], 0.500 + range, 0.0, 0.0);
+
+		}
+
+}
+
+
+
+void makeTextures()
+
+{
+
+
+	glGenTextures(2, tex);
+
+
+	//Texture mapping for the Quadmesh
+
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap1);
+
+
+	//Texture mapping for the Player submarine
+
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap2);
+
+
+	//Texture mapping for the Player submarine
+
+	glBindTexture(GL_TEXTURE_2D, tex[2]);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_FLOAT, textureMap3);
+
+}
 
 void initSubdivisionCurve() {
 	// Initialize 3 control points of the subdivision curve
@@ -526,34 +855,34 @@ void reshape3D(int w, int h)
 void animationHandler(int param)
 {
 	if (currentCurvePoint < (subcurve.numCurvePoints - 2)) {
-		
+
 		currentCurvePoint += 1;
-		
+
 		wAngle += 10.0;
 		if (botType == WHEEL) {
 			wheelRotation += 2.0;
 		}
-		
-			nonConvertedAngle = atan(((1.0 *subcurve.curvePoints[currentCurvePoint + 1].y) - (1.0 *subcurve.curvePoints[currentCurvePoint].y))/ ((1.0 * subcurve.curvePoints[currentCurvePoint + 1].x) - (1.0*subcurve.curvePoints[currentCurvePoint].x)));
-			
-			angle = (nonConvertedAngle / M_PI) * 180.0;
-			if (angle > 0) {
-				angle = -(180-angle);
-			}
 
-			nonConvertedRobotAngle = atan(((towerX) - (1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((towerZ) - (1.0 * subcurve.curvePoints[currentCurvePoint].x)));
-			robotAngle = ((nonConvertedRobotAngle / M_PI) * 180.0);
-			//if (robotAngle > 0) {
-			//	robotAngle = -(180 - robotAngle);
-			//}
+		nonConvertedAngle = atan(((1.0 * subcurve.curvePoints[currentCurvePoint + 1].y) - (1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((1.0 * subcurve.curvePoints[currentCurvePoint + 1].x) - (1.0 * subcurve.curvePoints[currentCurvePoint].x)));
 
-			printf("Current angel: %2f \n", angle );
-			glutSetWindow(window3D);
-			glutPostRedisplay();
-			glutTimerFunc(100, animationHandler, 0);
-			
+		angle = (nonConvertedAngle / M_PI) * 180.0;
+		if (angle > 0) {
+			angle = -(180 - angle);
+		}
 
-		
+		nonConvertedRobotAngle = atan(((towerX)-(1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((towerZ)-(1.0 * subcurve.curvePoints[currentCurvePoint].x)));
+		robotAngle = ((nonConvertedRobotAngle / M_PI) * 180.0);
+		//if (robotAngle > 0) {
+		//	robotAngle = -(180 - robotAngle);
+		//}
+
+		printf("Current angel: %2f \n", angle);
+		glutSetWindow(window3D);
+		glutPostRedisplay();
+		glutTimerFunc(100, animationHandler, 0);
+
+
+
 	}
 }
 
@@ -569,12 +898,12 @@ void display3D()
 	draw3DSubdivisionCurve();
 	draw3DControlPoints();
 	glPushMatrix();
-		glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
-		drawBot();
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
+	drawBot();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(subcurve.curvePoints[currentCurvePoint].x -6.0, 0, -subcurve.curvePoints[currentCurvePoint].y -3.0);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
 	drawBot();
 	glPopMatrix();
 
@@ -589,8 +918,9 @@ void display3D()
 	glPopMatrix();
 
 	glPushMatrix();
-		glTranslatef(towerX, 0.0, 0.0);
-		drawTower();
+	glTranslatef(towerX, 0.0, 0.0);
+	glRotatef(90,1.0, 0.0, 0.0);
+	drawTower();
 	glPopMatrix();
 	glutSwapBuffers();
 }
@@ -618,7 +948,7 @@ void draw3DSubdivisionCurve()
 
 void draw3DControlPoints()
 {
-	
+
 	int i, j;
 	for (i = 0; i < subcurve.numControlPoints; i++) {
 		glPushMatrix();
@@ -641,15 +971,10 @@ void draw3DControlPoints()
 		}
 		glEnd();
 		glPopMatrix();
-	
+
 	}
 }
 
-
-GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
-GLfloat robotBody_mat_specular[] = { 0.45f,0.55f,0.45f,1.0f };
-GLfloat robotBody_mat_diffuse[] = { 0.1f,0.35f,0.1f,1.0f };
-GLfloat robotBody_mat_shininess[] = { 20.0F };
 
 void drawRobot();
 
@@ -661,12 +986,12 @@ void drawBot()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, robotBody_mat_diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, robotBody_mat_shininess);
 	glTranslatef(0, 1.0, 0);
-	
+
 
 	glPushMatrix();
 	glRotatef(90, 0.0, 1.0, 0.0);
 	glTranslatef(0, 1.0, 0.0);
-	glScalef(0.2,0.2,0.2);
+	glScalef(0.2, 0.2, 0.2);
 	drawRobot();
 	glPopMatrix();
 
@@ -708,21 +1033,22 @@ void drawBot()
 
 }
 
-
+/*
 void drawTower()
 {
 	glPushMatrix();
 	glTranslatef(0.0, towerY, towerZ);
-		glPushMatrix();
-			glTranslatef(0.0,2.0,0.0);
-			glutSolidSphere(0.5, 30, 30);
-		glPopMatrix();
-		glPushMatrix();
-			glRotatef(-90, 1.0, 0.0, 0.0);
-			glutSolidCone(1.0, 2.0, 30, 30);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.0, 2.0, 0.0);
+	glutSolidSphere(0.5, 30, 30);
+	glPopMatrix();
+	glPushMatrix();
+	glRotatef(-90, 1.0, 0.0, 0.0);
+	glutSolidCone(1.0, 2.0, 30, 30);
+	glPopMatrix();
 	glPopMatrix();
 }
+*/
 
 void drawGround() {
 	glPushMatrix();
@@ -749,10 +1075,22 @@ void mouseButtonHandler3D(int button, int state, int x, int y)
 	switch (button)
 	{
 	case GLUT_LEFT_BUTTON:
-
+		if (state == GLUT_DOWN)
+		{
+			glutIdleFunc(aimUp);
+		}
+		if (state == GLUT_UP) {
+			glutIdleFunc(NULL);
+		}
 		break;
 	case GLUT_RIGHT_BUTTON:
-
+		if (state == GLUT_DOWN)
+		{
+			glutIdleFunc(aimDown);
+		}
+		if (state == GLUT_UP) {
+			glutIdleFunc(NULL);
+		}
 		break;
 	case GLUT_MIDDLE_BUTTON:
 
@@ -770,7 +1108,7 @@ void mouseMotionHandler3D(int x, int y)
 	if (currentButton == GLUT_LEFT_BUTTON) {
 		if (dy > 0) {
 			eyeZ += 0.05;
-			
+
 		}
 		else {
 			eyeZ -= 0.05;
@@ -870,21 +1208,6 @@ GLfloat robotBody_mat_diffuse[] = { 0.1f,0.35f,0.1f,1.0f };
 GLfloat robotBody_mat_shininess[] = { 32.0F };
 */
 
-GLfloat robotArm_mat_ambient[] = { 0.0215f, 0.1745f, 0.0215f, 0.55f };
-GLfloat robotArm_mat_diffuse[] = { 0.5f,0.0f,0.0f,1.0f };
-GLfloat robotArm_mat_specular[] = { 0.7f, 0.6f, 0.6f, 1.0f };
-GLfloat robotArm_mat_shininess[] = { 32.0F };
-
-GLfloat gun_mat_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat gun_mat_diffuse[] = { 0.01f,0.0f,0.01f,0.01f };
-GLfloat gun_mat_specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-GLfloat gun_mat_shininess[] = { 100.0F };
-
-GLfloat robotLowerBody_mat_ambient[] = { 0.25f, 0.25f, 0.25f, 1.0f };
-GLfloat robotLowerBody_mat_diffuse[] = { 0.4f, 0.4f, 0.4f, 1.0f };
-GLfloat robotLowerBody_mat_specular[] = { 0.774597f, 0.774597f, 0.774597f, 1.0f };
-GLfloat robotLowerBody_mat_shininess[] = { 76.8F };
-
 /*
 // Light properties
 GLfloat light_position0[] = { -4.0F, 8.0F, 8.0F, 1.0F };
@@ -899,25 +1222,25 @@ void drawHead();
 void drawLowerBody();
 
 // Default Mesh Size
-int meshSize = 16;
+
 void drawRobot()
 {
 
 	glPushMatrix();
 	glTranslatef(xPos, yPos, zPos);
 	glPushMatrix();
-		glRotatef(angle, 0.0, 1.0, 0.0);
-		drawLowerBody();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	drawLowerBody();
 	glPopMatrix();
 	glPushMatrix();
-		glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
-		drawBody();
-		glPushMatrix();
-		drawHead();
-		glPushMatrix();
-		drawCannon();
-		glPopMatrix();
-		glPopMatrix();
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
+	glPushMatrix();
+	drawHead();
+	glPushMatrix();
+	drawCannon();
+	glPopMatrix();
+	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
 
@@ -1117,8 +1440,308 @@ void drawCannon()
 
 }
 
+void drawTower() {
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
+	glRotatef(-45, 0, 0, 1);
+
+	glPushMatrix();
+
+	gluCylinder(gluNewQuadric(), 3, 3, 1, 4, 4);
+
+	glPushMatrix();
+
+	gluDisk(gluNewQuadric(), 0, 3, 4, 4);
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, -4);
 
 
+	glPushMatrix();
+
+	glRotatef(180, 0, 0, 1);
+
+	drawTowerCannon();
+
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+
+	glPushMatrix();
+
+	glTranslatef(-3.5, 3.5, 0.5);
+
+	glRotatef(90, 1, 1, 0);
+
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 10, 20, 20);
+
+	glPushMatrix();
+
+	glRotatef(robotAngle, 0, 0, 1);
+
+	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
+
+	glPushMatrix();
+
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 1);
+
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 9);
+
+	glRotatef(robotAngle, 0, 0, 1);
+
+	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
+
+	glPushMatrix();
+
+	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 1);
+
+	gluDisk(gluNewQuadric(), 0, 2, 20, 20);
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+}
+
+
+void drawTowerCannon() {
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotArm_mat_ambient);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotArm_mat_specular);
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotArm_mat_diffuse);
+
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotArm_mat_shininess);
+
+
+	glPushMatrix();
+
+	gluCylinder(gluNewQuadric(), 1, 3, 4, 4, 4);
+
+	glRotatef(wheelRot, 1, 1, 0);
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, -1);
+
+	gluSphere(gluNewQuadric(), 1, 20, 20);
+
+	glPushMatrix();
+
+	glTranslatef(2, -2, -1);
+
+	glRotatef(-90, 1, 1, 0);
+
+	gluCylinder(gluNewQuadric(), 2, 1.5, 5, 4, 4);
+
+	glPushMatrix();
+
+	gluDisk(gluNewQuadric(), 0, 2, 4, 4);
+
+	glPushMatrix();
+
+	glTranslatef(1, -1, -1);
+
+	glRotatef(-90, 1, 1, 0);
+
+	gluCylinder(gluNewQuadric(), 3, 3, 2.8, 20, 20);
+
+
+	glPushMatrix();
+
+	gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+
+	glPopMatrix();
+
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 2.9);
+
+	gluDisk(gluNewQuadric(), 0, 3, 20, 20);
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 5);
+
+	gluDisk(gluNewQuadric(), 0, 1.5, 4, 4);
+
+	glPushMatrix();
+
+	gluCylinder(gluNewQuadric(), 1, 1, 0.5, 20, 20);
+
+	glPushMatrix();
+
+	glTranslatef(0, 0, 0.5);
+
+	gluDisk(gluNewQuadric(), 0, 1, 20, 20);
+
+	glPushMatrix();
+
+	glTranslatef(-0.4, 0.4, 0);
+
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+	glTranslatef(0.4, -0.4, 0);
+
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+
+	glPopMatrix();
+
+	glPushMatrix();
+
+
+	gluCylinder(gluNewQuadric(), 0.3, 0.3, 1, 20, 20);
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+	glPopMatrix();
+
+}
+
+bool stop = false;
+
+
+void aimDown(void) {
+
+	wheelRot += 1;
+
+	if (wheelRot > 30)
+
+		wheelRot -= 1;
+
+	glutPostRedisplay();
+
+}
+
+void aimUp(void) {
+
+	wheelRot -= 1;
+
+	if (wheelRot < -20)
+
+		wheelRot += 1;
+
+	glutPostRedisplay();
+
+}
+
+void drawLaser(int on) {
+
+
+	if (on == 1) {
+
+		glPushMatrix();
+
+		glTranslatef(laserV.laserXPos, laserV.laserYPos, laserV.laserZPos);
+
+		glRotatef(laserV.laserAngle, 0, 1, 0);
+
+		glScalef(0.5, 0.5, 1);
+
+		glutSolidCone(2, 3, 4, 4);
+
+		glPopMatrix();
+
+	}
+
+}
+
+
+void fireLaser(int on) {
+
+
+	if (on == 1) {
+
+
+		if (laserV.laserTimer > 0) {
+
+			laserV.laserXPos -= 0.5 * sin((laserV.laserAngle * M_PI) / 180);
+
+			laserV.laserZPos -= 0.5 * cos((laserV.laserAngle * M_PI) / 180);
+
+			laserV.laserTimer -= 0.01;
+
+
+		}
+
+		else {
+
+			laserV.laserTimer = 100;
+
+			laserV.laserXPos = xPos;
+
+			laserV.laserYPos = yPos;
+
+			laserV.laserZPos = zPos;
+
+			fired = 0;
+
+		}
+
+
+	}
+
+	glutPostRedisplay();
+
+}
 
 
 
