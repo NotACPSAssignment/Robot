@@ -457,7 +457,7 @@ void drawBot()
 	drawRobot();
 	glPopMatrix();
 
-	
+
 	glPopMatrix();
 
 }
@@ -1001,53 +1001,6 @@ void initControlPoints() {
 	}
 }
 
-void draw3DSubdivisionCurve()
-{
-	// Subdivide the given curve
-	computeSubdivisionCurve(&subcurve);
-
-	int i = 0;
-
-	glPushMatrix();
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, threeDCurve_ambient);
-	glBegin(GL_LINE_STRIP);
-	for (i = 0; i < subcurve.numCurvePoints; i++) {
-		glVertex3f(subcurve.curvePoints[i].x, 0.5, -subcurve.curvePoints[i].y);
-	}
-	glEnd();
-	glPopMatrix();
-}
-
-void draw3DControlPoints()
-{
-
-	int i, j;
-	for (i = 0; i < subcurve.numControlPoints; i++) {
-		glPushMatrix();
-		glTranslatef(circles[i].circleCenter.x, 0.5, -circles[i].circleCenter.y);
-		// for the hoveredCircle, draw an outline and change its colour
-		if (i == hoveredCircle) {
-			// outline
-			//glColor3f(0.0, 1.0, 0.0);
-			glBegin(GL_LINE_LOOP);
-			for (j = 0; j < numCirclePoints; j++) {
-				glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-			}
-			glEnd();
-			// colour change
-			//glColor3f(0.5, 0.0, 1.0);
-		}
-		glBegin(GL_LINE_LOOP);
-		for (j = 0; j < numCirclePoints; j++) {
-			glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-		}
-		glEnd();
-		glPopMatrix();
-
-	}
-}
-
-
 void reshape3D(int w, int h)
 {
 	glutWindowWidth = (GLsizei)w;
@@ -1083,8 +1036,7 @@ void display3D()
 	//groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
 
-	draw3DSubdivisionCurve();
-	draw3DControlPoints();
+	computeSubdivisionCurve(&subcurve);
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
@@ -1301,14 +1253,17 @@ void specialKeyHandler(int key, int x, int y)
 	switch (key) {
 	case GLUT_KEY_F1:
 		printf("Controls:\n");
-		printf("w: Move Forward\n");
-		printf("s: Move Backwards\n");
+		printf("Left Arrow Key: Move Left\n");
+		printf("Right Arrow Key: Move Right\n");
+		printf("Space bar: Shoot projectile\n");
+		/*
 		printf("a: Turn Left\n");
 		printf("d: Turn Right\n");
 		printf("z: Lower Arms\n");
 		printf("x: Raise Arms\n");
 		printf("v: Spin Cube\n");
 		printf("V: Stop Cube Spin\n");
+		*/
 		break;
 	case GLUT_KEY_LEFT:
 		// add code here
