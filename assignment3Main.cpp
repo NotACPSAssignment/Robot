@@ -25,7 +25,7 @@ float angle = 0.0;
 float nonConvertedAngle = 0.0;
 int animate = 0;
 int delay = 15; // milliseconds
-
+const float robotMove = 1;
 float cubeSize = 1.0;
 float sphereRadius = 1.0;
 float wheelRadius = 1.0;
@@ -37,7 +37,19 @@ float wheelRotation = 0.0;
 float wAngle = 2;
 float nonConvertedRobotAngle = 0.0;
 float robotAngle = 0.0;
+float robotAngle2 = 0.0;
 
+const int towerAngle =0;
+struct laserValues {
+	float laserXPos, laserYPos, laserZPos, laserTimer, laserAngle;
+	int fired;
+}laserV;
+
+
+
+float bulletx; 
+float bullety; 
+float bulletz;
 GLdouble worldLeft = -12;
 GLdouble worldRight = 12;
 GLdouble worldBottom = -9;
@@ -274,11 +286,9 @@ void init2DCurveWindow()
 	initSubdivisionCurve();
 	initControlPoints();
 }
-
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(wvLeft, wvRight, wvBottom, wvTop);
@@ -287,15 +297,12 @@ void display()
 	draw2DScene();
 	glutSwapBuffers();
 }
-
-
 void draw2DScene()
 {
 	drawAxes();
 	drawSubdivisionCurve();
 	drawControlPoints();
 }
-
 void drawAxes()
 {
 	glPushMatrix();
@@ -310,13 +317,10 @@ void drawAxes()
 	glEnd();
 	glPopMatrix();
 }
-
 void drawSubdivisionCurve() {
 	// Subdivide the given curve
 	computeSubdivisionCurve(&subcurve);
-
 	int i = 0;
-
 	glColor3f(0.0, 1.0, 0.0);
 	glPushMatrix();
 	glBegin(GL_LINE_STRIP);
@@ -326,7 +330,6 @@ void drawSubdivisionCurve() {
 	glEnd();
 	glPopMatrix();
 }
-
 void drawControlPoints() {
 	int i, j;
 	for (i = 0; i < subcurve.numControlPoints; i++) {
@@ -353,7 +356,6 @@ void drawControlPoints() {
 		glPopMatrix();
 	}
 }
-
 */
 
 void initOpenGL(int w, int h)
@@ -629,7 +631,6 @@ int currentButton;
 void mouseButtonHandler(int button, int state, int xMouse, int yMouse)
 {
 	int i;
-
 	currentButton = button;
 	if (button == GLUT_LEFT_BUTTON)
 	{
@@ -670,17 +671,14 @@ void mouseButtonHandler(int button, int state, int xMouse, int yMouse)
 					circles[i].circleCenter = circles[i + 1].circleCenter;
 				}
 			}
-
 			glutSetWindow(window3D);
 			glutPostRedisplay();
 			break;
 		}
 	}
-
 	glutSetWindow(window2D);
 	glutPostRedisplay();
 }
-
 void mouseMotionHandler(int xMouse, int yMouse)
 {
 	if (currentButton == GLUT_LEFT_BUTTON) {
@@ -693,7 +691,6 @@ void mouseMotionHandler(int xMouse, int yMouse)
 	}
 	glutPostRedisplay();
 }
-
 void mouseHoverHandler(int xMouse, int yMouse)
 {
 	hoveredCircle = -1;
@@ -710,7 +707,6 @@ void mouseHoverHandler(int xMouse, int yMouse)
 			hoveredCircle = i;
 		}
 	}
-
 	glutPostRedisplay();
 }
 */
@@ -724,6 +720,14 @@ void keyboardHandler(unsigned char key, int x, int y)
 		// Esc, q, or Q key = Quit 
 		exit(0);
 		break;
+	case 32: 
+		laserV.laserXPos = bulletx;
+		laserV.laserYPos = bullety;
+		laserV.laserZPos = bulletz;
+		laserV.laserAngle = towerAngle;
+		laserV.fired = 1;
+		break;
+		break; 
 	case 'a':
 		// Add code to create timer and call animation handler
 		glutSetWindow(window3D);
@@ -765,12 +769,18 @@ void specialKeyHandler(int key, int x, int y)
 	case GLUT_KEY_LEFT:
 		// add code here
 		towerX -= 0.5;
+			robotAngle2 -= 30;
+		bulletx += robotMove * sin((towerAngle * M_PI) / 180);
+		bulletz += robotMove * cos((towerAngle * M_PI) / 180);
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
 	case GLUT_KEY_RIGHT:
 		// add code here;
 		towerX += 0.5;
+		robotAngle2 += 30;
+		bulletx-= robotMove * sin((towerAngle * M_PI) / 180);
+		bulletz -= robotMove * cos((towerAngle * M_PI) / 180);
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
@@ -917,9 +927,13 @@ void display3D()
 	drawBot();
 	glPopMatrix();
 
+
 	glPushMatrix();
-	glTranslatef(towerX, 0.0, 0.0);
-	glRotatef(90,1.0, 0.0, 0.0);
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
+	glTranslatef(towerX, 0.0, 10);
+	glScalef(0.4, 0.4, 0.4);
+	glRotatef(90, 1.0, 0.0, 0.0);
 	drawTower();
 	glPopMatrix();
 	glutSwapBuffers();
@@ -1170,16 +1184,16 @@ float baseLength = 0.25 * lowerBodyD;
 
 // Control Robot body rotation on base
 
-float robotAngle2 = 0.0;
+
 // Control arm rotation
-float shoulderAngle = -40.0;
+float shoulderAngle = -90;
 float gunAngle = -25.0;
 
 // Spin Cube Mesh
 float cubeAngle = 0.0;
 
 //Robot movement
-const float robotMove = 1;
+
 
 // Robot position
 float xPos = 0;
@@ -1194,10 +1208,7 @@ float yPosCan = 0;
 float wheelRot = 0;
 
 //Laser variables
-struct laserValues {
-	float laserXPos, laserYPos, laserZPos, laserTimer, laserAngle;
-	int fired;
-}laserV;
+
 
 // Lighting/shading and material properties for robot - upcoming lecture - just copy for now
 
@@ -1489,15 +1500,15 @@ void drawTower() {
 
 	glPushMatrix();
 
-	glRotatef(robotAngle, 0, 0, 1);
+	glRotatef(robotAngle2, 0, 0, 1);
 
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 
 	glPushMatrix();
-
+	
 	gluDisk(gluNewQuadric(), 0, 2, 12, 12);
 
-	glPopMatrix();
+	glTranslatef(0, 0, 3);
 
 	glPushMatrix();
 
@@ -1513,7 +1524,7 @@ void drawTower() {
 
 	glTranslatef(0, 0, 9);
 
-	glRotatef(robotAngle, 0, 0, 1);
+	glRotatef(robotAngle2, 0, 0, 1);
 
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 
@@ -1726,11 +1737,11 @@ void fireLaser(int on) {
 
 			laserV.laserTimer = 100;
 
-			laserV.laserXPos = xPos;
+			laserV.laserXPos = bulletx;
 
-			laserV.laserYPos = yPos;
+			laserV.laserYPos = bullety;
 
-			laserV.laserZPos = zPos;
+			laserV.laserZPos = bulletz;
 
 			fired = 0;
 
@@ -1742,6 +1753,7 @@ void fireLaser(int on) {
 	glutPostRedisplay();
 
 }
+
 
 
 
