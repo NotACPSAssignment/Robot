@@ -20,11 +20,6 @@
 #include "QuadMesh.h"
 #include "RGBpixmap.h"
 
-
-//
-enum BotType { CUBE, SPHERE, WHEEL };
-BotType botType = WHEEL;
-
 const int vWidth = 650;    // Viewport width in pixels
 const int vHeight = 500;    // Viewport height in pixels
 
@@ -132,7 +127,6 @@ void reshape(int w, int h);
 void mouse(int button, int state, int x, int y);
 void mouseMotionHandler(int xMouse, int yMouse);
 void keyboard(unsigned char key, int x, int y);
-void functionKeys(int key, int x, int y);
 void animationHandler(int param);
 void drawRobot();
 void drawBody();
@@ -250,8 +244,6 @@ int main(int argc, char** argv)
 	glutPositionWindow(200, 30);
 	glutDisplayFunc(display3D);
 	glutReshapeFunc(reshape3D);
-	//glutDisplayFunc(display);
-	//glutReshapeFunc(reshape);
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMotionHandler);
 	glutKeyboardFunc(keyboard);
@@ -466,9 +458,14 @@ void drawRobot()
 {
 
 	glPushMatrix();
+	glTranslatef(xPos, yPos, zPos);
 	glPushMatrix();
-	drawBody();
+	glRotatef(angle, 0.0, 1.0, 0.0);
 	drawLowerBody();
+	glPopMatrix();
+	glPushMatrix();
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
 	glPushMatrix();
 	drawHead();
 	glPushMatrix();
@@ -822,10 +819,7 @@ void animationHandler(int param)
 
 		currentCurvePoint += 1;
 
-		wAngle += 10.0;
-		if (botType == WHEEL) {
-			wheelRotation += 2.0;
-		}
+		
 
 		nonConvertedAngle = atan(((1.0 * subcurve.curvePoints[currentCurvePoint + 1].y) - (1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((1.0 * subcurve.curvePoints[currentCurvePoint + 1].x) - (1.0 * subcurve.curvePoints[currentCurvePoint].x)));
 
@@ -840,7 +834,7 @@ void animationHandler(int param)
 		//	robotAngle = -(180 - robotAngle);
 		//}
 
-		printf("Current angel: %2f \n", angle);
+		//printf("Current angel: %2f \n", angle);
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		glutTimerFunc(100, animationHandler, 0);
@@ -1225,21 +1219,6 @@ void keyboard(unsigned char key, int x, int y)
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
-	case 'c':
-		botType = CUBE;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 's':
-		botType = SPHERE;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
-	case 'w':
-		botType = WHEEL;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
-		break;
 	default:
 		break;
 	}
@@ -1256,14 +1235,6 @@ void specialKeyHandler(int key, int x, int y)
 		printf("Left Arrow Key: Move Left\n");
 		printf("Right Arrow Key: Move Right\n");
 		printf("Space bar: Shoot projectile\n");
-		/*
-		printf("a: Turn Left\n");
-		printf("d: Turn Right\n");
-		printf("z: Lower Arms\n");
-		printf("x: Raise Arms\n");
-		printf("v: Spin Cube\n");
-		printf("V: Stop Cube Spin\n");
-		*/
 		break;
 	case GLUT_KEY_LEFT:
 		// add code here
