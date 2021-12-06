@@ -1,6 +1,4 @@
-//CPS511 Assignment 3
-//Justtin Hoang 500884336, Majuth Kirakalaprathapan 500878999, Al Sagun 500882340
-//Section 011
+//Testing
 
 #define _USE_MATH_DEFINES
 #define STB_IMAGE_IMPLEMENTATION
@@ -19,6 +17,8 @@
 #include "subdivcurve.h"
 #include "QuadMesh.h"
 #include "RGBpixmap.h"
+
+int test = 0;
 
 const int vWidth = 650;    // Viewport width in pixels
 const int vHeight = 500;    // Viewport height in pixels
