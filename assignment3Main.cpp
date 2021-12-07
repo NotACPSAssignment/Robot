@@ -487,7 +487,10 @@ void drawBot()
 
 void drawRobot()
 {
-
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
 	glPushMatrix();
 	glTranslatef(xPos, yPos, zPos);
 	glPushMatrix();
@@ -689,6 +692,10 @@ void drawCannon()
 
 void drawTower() {
 
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	//glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
 
 	glRotatef(-45, 0, 0, 1);
 	glPushMatrix();
@@ -1446,8 +1453,14 @@ void specialKeyHandler(int key, int x, int y)
 	case GLUT_KEY_LEFT:
 		if (towerDMG < 3) {
 			// add code here
-			towerX -= 0.5;
-			robotAngle2 -= 30;
+			if (towerX > -9) {
+				towerX -= 0.5;
+				robotAngle2 -= 30;
+			}
+			else {
+				towerX = -9;
+			}
+			
 			//zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
@@ -1457,8 +1470,13 @@ void specialKeyHandler(int key, int x, int y)
 	case GLUT_KEY_RIGHT:
 		if (towerDMG < 3) {
 			// add code here;
-			towerX += 0.5;
-			robotAngle2 += 30;
+			if (towerX < 10) {
+				towerX += 0.5;
+				robotAngle2 += 30;
+			}
+			else {
+				towerX = 10;
+			}
 			zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
