@@ -179,11 +179,11 @@ void makeTextureMap();
 void makeTextures();
 void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
 
+void drawBot2();
+void drawRobot2();
 
-void drawEnLaser1(int on);
-void drawEnLaser2(int on);
-void drawEnLaser3(int on);
-void drawEnLaser4(int on);
+
+void drawEnLaser(int on);
 void fireEnLaser(int on);
 
 static GLfloat textureMap1[64][64][3];
@@ -226,12 +226,6 @@ float wheelRotation = 0.0;
 float nonConvertedRobotAngle = 0.0;
 float robotAngle2 = 0.0;
 const int towerAngle = 0;
-
-// If collisions happen
-int col1 = 0;
-int col2 = 0;
-int col3 = 0;
-int col4 = 0;
 
 GLdouble worldLeft = -12;
 GLdouble worldRight = 12;
@@ -537,6 +531,293 @@ void drawRobot()
 	}
 	else if (shot == false) {
 		backwards = 0;
+	}
+
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
+	glPushMatrix();
+	drawHead();
+	glPushMatrix();
+	drawCannon();
+	glPopMatrix();
+	glPopMatrix();
+
+	glPopMatrix();
+	glPopMatrix();
+
+}
+
+//Robot1 Body
+void drawBot1();
+void drawRobot1();
+void drawBot1()
+{
+	glPushMatrix();
+
+	glTranslatef(0, 1.0, 0);
+
+
+	glPushMatrix();
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glTranslatef(0, 1.0, 0.0);
+	glScalef(0.2, 0.2, 0.2);
+	drawRobot1();
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+}
+boolean shot1 = false;
+float backwards1 = 0;
+float yang1 = 0, xang1 = 0;
+void drawRobot1()
+{
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
+	glPushMatrix();
+	glTranslatef(xPos, yPos, zPos);
+	glPushMatrix();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	drawLowerBody();
+	glPopMatrix();
+	glPushMatrix();
+
+	if (shot1) {
+		backwards1 += 1.5;
+
+		glTranslatef(backwards1, 0.0, 0.0);
+		glRotatef(yang1, 1.0, 1.0, 0.0);
+		glTranslatef(-0.4, 0.25, 0.0);
+		glRotatef(xang1, 0.0, 0.0, 1.0);
+
+		yang1 = yang1 + 1.35;
+		if (yang1 > 360.0)
+			yang1 = 0.0;
+		xang1 = xang1 - 1.15;
+		if (xang1 < 0.0)
+			xang1 = 360.0;
+	}
+	else if (shot1 == false) {
+		backwards1 = 0;
+	}
+
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
+	glPushMatrix();
+	drawHead();
+	glPushMatrix();
+	drawCannon();
+	glPopMatrix();
+	glPopMatrix();
+
+	glPopMatrix();
+	glPopMatrix();
+
+}
+
+//Robot2 Body
+
+void drawBot2()
+{
+	glPushMatrix();
+
+	glTranslatef(0, 1.0, 0);
+
+
+	glPushMatrix();
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glTranslatef(0, 1.0, 0.0);
+	glScalef(0.2, 0.2, 0.2);
+	drawRobot2();
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+}
+boolean shot2 = false;
+float backwards2 = 0;
+float yang2 = 0, xang2 = 0;
+void drawRobot2()
+{
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
+	glPushMatrix();
+	glTranslatef(xPos, yPos, zPos);
+	glPushMatrix();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	drawLowerBody();
+	glPopMatrix();
+	glPushMatrix();
+
+	if (shot2) {
+		backwards2 += 1.5;
+
+		glTranslatef(backwards2, 0.0, 0.0);
+		glRotatef(yang2, 1.0, 1.0, 0.0);
+		glTranslatef(-0.4, 0.25, 0.0);
+		glRotatef(xang2, 0.0, 0.0, 1.0);
+
+		yang2 = yang2 + 1.35;
+		if (yang2 > 360.0)
+			yang2 = 0.0;
+		xang2 = xang2 - 1.15;
+		if (xang2 < 0.0)
+			xang2 = 360.0;
+	}
+	else if (shot2 == false) {
+		backwards2 = 0;
+	}
+
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
+	glPushMatrix();
+	drawHead();
+	glPushMatrix();
+	drawCannon();
+	glPopMatrix();
+	glPopMatrix();
+
+	glPopMatrix();
+	glPopMatrix();
+
+}
+
+//Robot3 Body
+void drawBot3();
+void drawRobot3();
+void drawBot3()
+{
+	glPushMatrix();
+
+	glTranslatef(0, 1.0, 0);
+
+
+	glPushMatrix();
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glTranslatef(0, 1.0, 0.0);
+	glScalef(0.2, 0.2, 0.2);
+	drawRobot3();
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+}
+boolean shot3 = false;
+float backwards3 = 0;
+float yang3 = 0, xang3 = 0;
+void drawRobot3()
+{
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
+	glPushMatrix();
+	glTranslatef(xPos, yPos, zPos);
+	glPushMatrix();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	drawLowerBody();
+	glPopMatrix();
+	glPushMatrix();
+
+	if (shot3) {
+		backwards3 += 1.5;
+
+		glTranslatef(backwards3, 0.0, 0.0);
+		glRotatef(yang3, 1.0, 1.0, 0.0);
+		glTranslatef(-0.4, 0.25, 0.0);
+		glRotatef(xang3, 0.0, 0.0, 1.0);
+
+		yang3 = yang3 + 1.35;
+		if (yang3 > 360.0)
+			yang3 = 0.0;
+		xang3 = xang3 - 1.15;
+		if (xang3 < 0.0)
+			xang3 = 360.0;
+	}
+	else if (shot3 == false) {
+		backwards3 = 0;
+	}
+
+	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	drawBody();
+	glPushMatrix();
+	drawHead();
+	glPushMatrix();
+	drawCannon();
+	glPopMatrix();
+	glPopMatrix();
+
+	glPopMatrix();
+	glPopMatrix();
+
+}
+
+//Robot4 Body
+void drawBot4();
+void drawRobot4();
+void drawBot4()
+{
+	glPushMatrix();
+
+	glTranslatef(0, 1.0, 0);
+
+
+	glPushMatrix();
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glTranslatef(0, 1.0, 0.0);
+	glScalef(0.2, 0.2, 0.2);
+	drawRobot4();
+	glPopMatrix();
+
+
+	glPopMatrix();
+
+}
+boolean shot4 = false;
+float backwards4 = 0;
+float yang4 = 0, xang4 = 0;
+void drawRobot4()
+{
+	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
+	glPushMatrix();
+	glTranslatef(xPos, yPos, zPos);
+	glPushMatrix();
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	drawLowerBody();
+	glPopMatrix();
+	glPushMatrix();
+
+	if (shot4) {
+		backwards4 += 1.5;
+
+		glTranslatef(backwards4, 0.0, 0.0);
+		glRotatef(yang4, 1.0, 1.0, 0.0);
+		glTranslatef(-0.4, 0.25, 0.0);
+		glRotatef(xang4, 0.0, 0.0, 1.0);
+
+		yang4 = yang4 + 1.35;
+		if (yang4 > 360.0)
+			yang4 = 0.0;
+		xang4 = xang4 - 1.15;
+		if (xang4 < 0.0)
+			xang4 = 360.0;
+	}
+	else if (shot4 == false) {
+		backwards4 = 0;
 	}
 
 	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
@@ -982,8 +1263,8 @@ void drawLaser(int on) {
 		glPushMatrix();
 		glTranslatef(laserV.laserXPos, laserV.laserYPos, laserV.laserZPos);
 		glRotatef(laserV.laserAngle, 0, 1, 0);
-		glScalef(0.1, 0.1, 1);
-		gluSphere(gluNewQuadric(), 2, 12, 12);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
 		glPopMatrix();
 	}
 }
@@ -1011,7 +1292,7 @@ void fireLaser(int on) {
 	glutPostRedisplay();
 }
 
-void drawEnLaser1(int on) {
+void drawEnLaser(int on) {
 
 	if (on == 1) {
 		glPushMatrix();
@@ -1020,12 +1301,7 @@ void drawEnLaser1(int on) {
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
-	}
-}
 
-void drawEnLaser2(int on) {
-
-	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE2.lEn2XPos, laserE2.lEn2YPos, laserE2.lEn2ZPos);
 		glRotatef(laserE2.lEn2Angle, 0, 1, 0);
@@ -1033,23 +1309,15 @@ void drawEnLaser2(int on) {
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
 
-	}
-}
-void drawEnLaser3(int on) {
 
-	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE3.lEn3XPos, laserE3.lEn3YPos, laserE3.lEn3ZPos);
 		glRotatef(laserE3.lEn3Angle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
-	}
-}
 
-void drawEnLaser4(int on) {
 
-	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE4.lEn4XPos, laserE4.lEn4YPos, laserE4.lEn4ZPos);
 		glRotatef(laserE4.lEn4Angle, 0, 1, 0);
@@ -1059,15 +1327,13 @@ void drawEnLaser4(int on) {
 	}
 }
 
-
-
 void fireEnLaser(int on) {
 
 	if (on == 1) {
 
 		if (laserE1.lEnTimer > 0) {
-			laserE1.lEnXPos -= 0.15 * sin((laserE1.lEnAngle * M_PI) / 180);
-			laserE1.lEnZPos -= 0.15 * cos((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnXPos -= 0.2 * sin((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnZPos -= 0.2 * cos((laserE1.lEnAngle * M_PI) / 180);
 			laserE1.lEnTimer -= 0.01;
 
 		}
@@ -1080,8 +1346,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE2.lEn2Timer > 0) {
-			laserE2.lEn2XPos -= 0.15 * sin((laserE2.lEn2Angle * M_PI) / 180);
-			laserE2.lEn2ZPos -= 0.15 * cos((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2XPos -= 0.2 * sin((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2ZPos -= 0.2 * cos((laserE2.lEn2Angle * M_PI) / 180);
 			laserE2.lEn2Timer -= 0.01;
 
 		}
@@ -1094,8 +1360,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE3.lEn3Timer > 0) {
-			laserE3.lEn3XPos -= 0.15 * sin((laserE3.lEn3Angle * M_PI) / 180);
-			laserE3.lEn3ZPos -= 0.15 * cos((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3XPos -= 0.2 * sin((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3ZPos -= 0.2 * cos((laserE3.lEn3Angle * M_PI) / 180);
 			laserE3.lEn3Timer -= 0.01;
 
 		}
@@ -1108,8 +1374,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE4.lEn4Timer > 0) {
-			laserE4.lEn4XPos -= 0.15 * sin((laserE4.lEn4Angle * M_PI) / 180);
-			laserE4.lEn4ZPos -= 0.15 * cos((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4XPos -= 0.2 * sin((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4ZPos -= 0.2 * cos((laserE4.lEn4Angle * M_PI) / 180);
 			laserE4.lEn4Timer -= 0.01;
 
 		}
@@ -1247,80 +1513,70 @@ void display3D()
 	//draw3DSubdivisionCurve();
 	//draw3DControlPoints();
 
-
-	// Lasers firing -------------------------------------------------------------------------------------------------------------------------------------
 	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, tex[2]);
-	glTranslatef(0, 2.7, 3);
-	drawLaser(laserV.fired);
-	fireLaser(laserV.fired);
-	glPopMatrix();
 
-	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
-	drawEnLaser1(laserE1.En1fired);
+	drawEnLaser(laserE1.En1fired);
 	fireEnLaser(laserE1.En1fired);
 	glPopMatrix();
-
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	glTranslatef(0, 2.7, 0);
-	drawEnLaser2(laserE2.En2fired);
-	fireEnLaser(laserE2.En2fired);
-	glPopMatrix();
-
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	glTranslatef(0, 2.7, 0);
-	drawEnLaser3(laserE3.En3fired);
-	fireEnLaser(laserE3.En3fired);
-	glPopMatrix();
-
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	glTranslatef(0, 2.7, 0);
-	drawEnLaser4(laserE4.En4fired);
-	fireEnLaser(laserE4.En4fired);
-	glPopMatrix();
-
-	// Enemy Bots --------------------------------------------------------------------------------------------------------------------------------------
-	glPushMatrix();
-	glScalef(bot3Scale, bot3Scale, bot3Scale);
-	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
-	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	drawBot();
-	glPopMatrix();
-
-
 	glPushMatrix();
 	glScalef(bot2Scale, bot2Scale, bot2Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
 
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	glTranslatef(0, 2.7, 0);
+	drawEnLaser(laserE2.En2fired);
+	fireEnLaser(laserE2.En2fired);
+	glPopMatrix();
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	glTranslatef(0, 2.7, 0);
+	drawEnLaser(laserE3.En3fired);
+	fireEnLaser(laserE3.En3fired);
+	glPopMatrix();
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	glTranslatef(0, 2.7, 0);
+	drawEnLaser(laserE4.En4fired);
+	fireEnLaser(laserE4.En4fired);
+	glPopMatrix();
 
-	drawBot();
+	glPushMatrix();
+	glScalef(bot3Scale, bot3Scale, bot3Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
+
+	glScalef(bot4Scale, bot4Scale, bot4Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
+
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	drawBot1();
+	glPopMatrix();
+
+	glPushMatrix();
+	glScalef(bot2Scale, bot2Scale, bot2Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	drawBot2();
 	glPopMatrix();
 
 	glPushMatrix();
 	glScalef(bot4Scale, bot4Scale, bot4Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
-
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	drawBot();
-
+	drawBot3();
 	glPopMatrix();
 
 	glPushMatrix();
 	glScalef(bot1Scale, bot1Scale, bot1Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 10.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 4.0);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
-	drawBot();
+	drawBot4();
 	glPopMatrix();
 
-
-	// Player Tower ----------------------------------------------------------------------------------------------------------------------------------
 	glPushMatrix();
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
 	glTranslatef(towerX, 0.9, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
@@ -1466,35 +1722,24 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
 
-		if (col3 == 0) {
-			laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
-			laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
-			laserE1.lEnAngle = robotAngle + 180;
-			laserE1.En1fired = 1;
-		}
-		if (col2 == 0) {
-			laserE1.En1fired = 1;
-			laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
-			laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
-			laserE2.lEn2Angle = robotAngle + 180;
-			laserE2.En2fired = 1;
-		}
+		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
+		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
+		laserE1.lEnAngle = robotAngle + 180;
+		laserE1.En1fired = 1;
 
-		if (col4 == 0) {
-			laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
-			laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
-			laserE3.lEn3Angle = robotAngle + 180;
-			laserE3.En3fired = 1;
-		}
+		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
+		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 2;
+		laserE2.lEn2Angle = robotAngle + 180;
+		laserE2.En2fired = 1;
+		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
+		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 3;
+		laserE3.lEn3Angle = robotAngle + 180;
+		laserE3.En3fired = 1;
 
-
-		if (col1 == 0) {
-			laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
-			laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
-			laserE4.lEn4Angle = robotAngle + 180;
-			laserE4.En4fired = 1;
-		}
-
+		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
+		laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
+		laserE4.lEn4Angle = robotAngle + 180;
+		laserE4.En4fired = 1;
 
 		if (towerDMG == 3)
 		{
@@ -1518,10 +1763,6 @@ void keyboard(unsigned char key, int x, int y)
 		bot2Scale = 1.0;
 		bot3Scale = 1.0;
 		bot4Scale = 1.0;
-		col1 = 0;
-		col2 = 0;
-		col3 = 0;
-		col4 = 0;
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
@@ -1537,7 +1778,7 @@ void keyboard(unsigned char key, int x, int y)
 		camera = !camera;
 		break;
 	case 'b':
-		shot = !shot;
+		shot1 = !shot1;
 		break;
 	}
 
@@ -1592,6 +1833,7 @@ void specialKeyHandler(int key, int x, int y)
 }
 
 /*
+
 void draw3DSubdivisionCurve()
 {
 	// Subdivide the given curve
@@ -1651,44 +1893,45 @@ void detectEnemyCollision() {
 
 	if (1 == 0) {}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -1) {
-		bot1Scale = 0.1;
-		col1 = 1;
+		//bot1Scale = 0.1;
+		shot1 = true;
 		printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -1) {
-		bot2Scale = 0.1;
-		col2 = 1;
+		//bot2Scale = 0.1;
+		shot2 = true;
 		printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -1) {
-		bot3Scale = 0.1;
-		col3 = 1;
+		//bot3Scale = 0.1;
+		shot3 = true;
 		printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -1) {
-		bot4Scale = 0.1;
-		col4 = 1;
+		//bot4Scale = 0.1;
+		shot4 = true;
 		printf("Collision with bot 4 detected");
 	}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -9) {
-		bot1Scale = 0.1;
-		col1 = 1;
+		//bot1Scale = 0.1;
+		shot1 = true;
 		printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y - 3.0) < 4) {
-		bot2Scale = 0.1;
-		col2 = 1;
+		//bot2Scale = 0.1;
+		shot2 = true;
 		printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y) < 4) {
-		bot3Scale = 0.1;
-		col3 = 1;
+		//bot3Scale = 0.1;
+		shot3 = true;
 		printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 2.0) < 5) {
-		bot4Scale = 0.1;
-		col4 = 1;
+		//bot4Scale = 0.1;
+		shot4 = true;
 		printf("Collision with bot 4 detected");
 	}
+	printf("%f\n", bot1ZDis);
 
 }
