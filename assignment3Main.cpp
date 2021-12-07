@@ -512,6 +512,7 @@ boolean shot = false;
 int spinning = 0;
 float backwards = 0;
 float yang = 0, xang = 0;
+
 void drawRobot()
 {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
@@ -1217,7 +1218,6 @@ void animationHandler(int param)
 		glutTimerFunc(100, animationHandler, 0);
 	}
 
-}
 
 void fireAni1(int value) {
 	float rTime = rand() % 3 + 1.7;
@@ -1270,6 +1270,7 @@ void fireAni4(int value) {
 		laserE4.En4fired = 0;
 	}
 	glutTimerFunc(rTime * 1100, fireAni4, 0);
+
 }
 
 
