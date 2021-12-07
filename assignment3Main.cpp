@@ -126,6 +126,8 @@ static GLfloat light_ambient[] = { 0.2F, 0.2F, 0.2F, 1.0F };
 static GLfloat model_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
 
 
+boolean camera = false;
+
 // Mouse button
 int currentButton;
 
@@ -1157,7 +1159,13 @@ void display3D()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	if (camera) {
+		gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	}
+	else {
+		gluLookAt(towerX, yPos + 5, towerZ, towerX, 0.0, 0.0, 0.0, 1.0, 0.0);
+	}
 
 	fireLaser(laserV.fired);
 	drawLaser(laserV.fired);
@@ -1413,6 +1421,10 @@ void keyboard(unsigned char key, int x, int y)
 		}
 
 		break;
+	case 'p':
+		camera = !camera;
+
+		break;
 	}
 
 	glutPostRedisplay();   // Trigger a window redisplay
@@ -1433,7 +1445,7 @@ void specialKeyHandler(int key, int x, int y)
 			// add code here
 			towerX -= 0.5;
 			robotAngle2 -= 30;
-			zPos = zPos;
+			//zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
 		}
@@ -1453,55 +1465,3 @@ void specialKeyHandler(int key, int x, int y)
 	}
 	glutPostRedisplay();
 }
-
-/*
-
-void draw3DSubdivisionCurve()
-{
-	// Subdivide the given curve
-	computeSubdivisionCurve(&subcurve);
-
-	int i = 0;
-
-	glPushMatrix();
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, threeDCurve_ambient);
-	glBegin(GL_LINE_STRIP);
-	for (i = 0; i < subcurve.numCurvePoints; i++) {
-		glVertex3f(subcurve.curvePoints[i].x, 0.5, -subcurve.curvePoints[i].y);
-	}
-	glEnd();
-	glPopMatrix();
-}
-
-
-
-void draw3DControlPoints()
-{
-
-	int i, j;
-	for (i = 0; i < subcurve.numControlPoints; i++) {
-		glPushMatrix();
-		glTranslatef(circles[i].circleCenter.x, 0.5, -circles[i].circleCenter.y);
-		// for the hoveredCircle, draw an outline and change its colour
-		if (i == hoveredCircle) {
-			// outline
-			//glColor3f(0.0, 1.0, 0.0);
-			glBegin(GL_LINE_LOOP);
-			for (j = 0; j < numCirclePoints; j++) {
-				glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-			}
-			glEnd();
-			// colour change
-			//glColor3f(0.5, 0.0, 1.0);
-		}
-		glBegin(GL_LINE_LOOP);
-		for (j = 0; j < numCirclePoints; j++) {
-			glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-		}
-		glEnd();
-		glPopMatrix();
-
-	}
-}
-
-*/
