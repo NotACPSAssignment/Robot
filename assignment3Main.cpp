@@ -512,6 +512,7 @@ boolean shot = false;
 int spinning = 0;
 float backwards = 0;
 float yang = 0, xang = 0;
+
 void drawRobot()
 {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
@@ -654,7 +655,7 @@ void drawRobot1()
 		backwards1 = 0;
 	}
 
-	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	glRotatef(robotAngle - 50, 0.0, 1.0, 0.0);
 	drawBody();
 	glPushMatrix();
 	drawHead();
@@ -798,7 +799,7 @@ void drawRobot3()
 		backwards3 = 0;
 	}
 
-	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	glRotatef(robotAngle - 120, 0.0, 1.0, 0.0);
 	drawBody();
 	glPushMatrix();
 	drawHead();
@@ -870,7 +871,7 @@ void drawRobot4()
 		backwards4 = 0;
 	}
 
-	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
+	glRotatef(robotAngle - 140, 0.0, 1.0, 0.0);
 	drawBody();
 	glPushMatrix();
 	drawHead();
@@ -1058,7 +1059,7 @@ void drawTower() {
 	glRotatef(180, 0, 0, 1);
 	gluCylinder(gluNewQuadric(), 0.5, 0.5, 10, 20, 20);
 	glPushMatrix();
-	glRotatef(robotAngle, 0, 0, 1);
+	//glRotatef(robotAngle, 0, 0, 1);
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 	glPushMatrix();
 	glRotatef(180, 1, 0, 0);
@@ -1071,7 +1072,7 @@ void drawTower() {
 	glPopMatrix();
 	glPushMatrix();
 	glTranslatef(0, 0, 9);
-	glRotatef(robotAngle, 0, 0, 1);
+	//glRotatef(robotAngle, 0, 0, 1);
 	gluCylinder(gluNewQuadric(), 2, 2, 1, 12, 12);
 	glPushMatrix();
 	glRotatef(180, 1, 0, 0);
@@ -1216,15 +1217,14 @@ void animationHandler(int param)
 		glutPostRedisplay();
 		glutTimerFunc(100, animationHandler, 0);
 	}
-
 }
 
 void fireAni1(int value) {
-	float rTime = rand() % 3 + 1.7;
+	float rTime = rand() % 5 + 3;
 	if (col3 == 0) {
 		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
 		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
-		laserE1.lEnAngle = robotAngle + 180;
+		laserE1.lEnAngle = robotAngle + 140;
 		laserE1.En1fired = 1;
 	}
 	if (currentCurvePoint == 0) {
@@ -1233,7 +1233,7 @@ void fireAni1(int value) {
 	glutTimerFunc(rTime * 1000, fireAni1, 0);
 }
 void fireAni2(int value) {
-	float rTime = rand() % 3 + 1.7;
+	float rTime = rand() % 5 + 3;
 	if (col2 == 0) {
 		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
 		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
@@ -1243,14 +1243,14 @@ void fireAni2(int value) {
 	if (currentCurvePoint == 0) {
 		laserE2.En2fired = 0;
 	}
-	glutTimerFunc(rTime * 970, fireAni2, 0);
+	glutTimerFunc(rTime * 1000, fireAni2, 0);
 }
 void fireAni3(int value) {
-	float rTime = rand() % 3 + 1.7;
+	float rTime = rand() % 5 + 3;
 	if (col4 == 0) {
 		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
 		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
-		laserE3.lEn3Angle = robotAngle + 180;
+		laserE3.lEn3Angle = robotAngle + 120;
 		laserE3.En3fired = 1;
 	}
 	if (currentCurvePoint == 0) {
@@ -1259,17 +1259,18 @@ void fireAni3(int value) {
 	glutTimerFunc(rTime * 1100, fireAni3, 0);
 }
 void fireAni4(int value) {
-	float rTime = rand() % 3 + 1.7;
+	float rTime = rand() % 4 + 2;
 	if (col1 == 0) {
 		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
 		laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
-		laserE4.lEn4Angle = robotAngle + 180;
+		laserE4.lEn4Angle = robotAngle + 230;
 		laserE4.En4fired = 1;
 	}
 	if (currentCurvePoint == 0) {
 		laserE4.En4fired = 0;
 	}
 	glutTimerFunc(rTime * 1100, fireAni4, 0);
+
 }
 
 
@@ -1415,8 +1416,8 @@ void fireEnLaser(int on) {
 	if (on == 1) {
 
 		if (laserE1.lEnTimer > 0) {
-			laserE1.lEnXPos -= 0.15 * sin((laserE1.lEnAngle * M_PI) / 180);
-			laserE1.lEnZPos -= 0.15 * cos((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnXPos -= 0.05 * sin((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnZPos -= 0.05 * cos((laserE1.lEnAngle * M_PI) / 180);
 			laserE1.lEnTimer -= 0.01;
 
 		}
@@ -1429,8 +1430,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE2.lEn2Timer > 0) {
-			laserE2.lEn2XPos -= 0.15 * sin((laserE2.lEn2Angle * M_PI) / 180);
-			laserE2.lEn2ZPos -= 0.15 * cos((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2XPos -= 0.05 * sin((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2ZPos -= 0.05 * cos((laserE2.lEn2Angle * M_PI) / 180);
 			laserE2.lEn2Timer -= 0.01;
 
 		}
@@ -1443,8 +1444,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE3.lEn3Timer > 0) {
-			laserE3.lEn3XPos -= 0.15 * sin((laserE3.lEn3Angle * M_PI) / 180);
-			laserE3.lEn3ZPos -= 0.15 * cos((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3XPos -= 0.05 * sin((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3ZPos -= 0.05 * cos((laserE3.lEn3Angle * M_PI) / 180);
 			laserE3.lEn3Timer -= 0.01;
 
 		}
@@ -1457,8 +1458,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE4.lEn4Timer > 0) {
-			laserE4.lEn4XPos -= 0.15 * sin((laserE4.lEn4Angle * M_PI) / 180);
-			laserE4.lEn4ZPos -= 0.15 * cos((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4XPos -= 0.05 * sin((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4ZPos -= 0.05 * cos((laserE4.lEn4Angle * M_PI) / 180);
 			laserE4.lEn4Timer -= 0.01;
 
 		}
@@ -1667,6 +1668,8 @@ void display3D()
 	drawBot1();
 	glPopMatrix();
 
+	nonConvertedRobotAngle = atan(((towerX)-(1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((towerZ)-(1.0 * subcurve.curvePoints[currentCurvePoint].x)));
+	robotAngle = ((nonConvertedRobotAngle / M_PI) * 180.0);
 
 	// Player Tower ----------------------------------------------------------------------------------------------------------------------------------
 	glPushMatrix();
@@ -1809,6 +1812,10 @@ void keyboard(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 32:
+		laserV.laserXPos = towerX;
+		laserV.laserZPos = zPos;
+		laserV.laserAngle = towerAngle;
+		laserV.fired = 1;
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
@@ -1975,43 +1982,43 @@ void detectEnemyCollision() {
 		shot1 = true;
 		//bot1Scale = 0.1;
 		col1 = 1;
-		printf("Collision with bot 1 detected");
+		//printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -1) {
 		shot2 = true;
 		//bot2Scale = 0.1;
 		col2 = 1;
-		printf("Collision with bot 2 detected");
+		//printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -1) {
 		shot3 = true;
 		col3 = 1;
-		printf("Collision with bot 3 detected");
+		//printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -1) {
 		shot4 = true;
 		col4 = 1;
-		printf("Collision with bot 4 detected");
+		//printf("Collision with bot 4 detected");
 	}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -9) {
 		shot1 = true;
 		col1 = 1;
-		printf("Collision with bot 1 detected");
+		//printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y - 3.0) < 4) {
 		shot2 = true;
 		col2 = 1;
-		printf("Collision with bot 2 detected");
+		//printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y) < 4) {
 		shot3 = true;
 		col3 = 1;
-		printf("Collision with bot 3 detected");
+		//printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 2.0) < 5) {
 		shot4 = true;
 		col4 = 1;
-		printf("Collision with bot 4 detected");
+		//printf("Collision with bot 4 detected");
 	}
 
 }
