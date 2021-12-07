@@ -20,7 +20,7 @@
 #include "QuadMesh.h"
 #include "RGBpixmap.h"
 
-int test = 0;
+int test = 1;
 
 const int vWidth = 650;    // Viewport width in pixels
 const int vHeight = 500;    // Viewport height in pixels
