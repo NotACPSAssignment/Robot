@@ -20,7 +20,7 @@
 #include "QuadMesh.h"
 #include "RGBpixmap.h"
 
-int test = 0;
+int test = 1;
 
 const int vWidth = 650;    // Viewport width in pixels
 const int vHeight = 500;    // Viewport height in pixels
@@ -966,14 +966,14 @@ void drawEnLaser(int on) {
 		glTranslatef(laserE1.lEnXPos, laserE1.lEnYPos, laserE1.lEnZPos);
 		glRotatef(laserE1.lEnAngle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
-		glutSolidCone(2, 3, 4, 4);
+		gluSphere(gluNewQuadric(), 0.5, 20, 20);
 		glPopMatrix();
 
 		glPushMatrix();
 		glTranslatef(laserE2.lEn2XPos, laserE2.lEn2YPos, laserE2.lEn2ZPos);
 		glRotatef(laserE2.lEn2Angle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
-		glutSolidCone(2, 3, 4, 4);
+		gluSphere(gluNewQuadric(), 0.5, 20, 20);
 		glPopMatrix();
 
 
@@ -981,7 +981,7 @@ void drawEnLaser(int on) {
 		glTranslatef(laserE3.lEn3XPos, laserE3.lEn3YPos, laserE3.lEn3ZPos);
 		glRotatef(laserE3.lEn3Angle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
-		glutSolidCone(2, 3, 4, 4);
+		gluSphere(gluNewQuadric(), 0.5, 20, 20);
 		glPopMatrix();
 
 
@@ -989,7 +989,7 @@ void drawEnLaser(int on) {
 		glTranslatef(laserE4.lEn4XPos, laserE4.lEn4YPos, laserE4.lEn4ZPos);
 		glRotatef(laserE4.lEn4Angle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
-		glutSolidCone(2, 3, 4, 4);
+		gluSphere(gluNewQuadric(), 0.5, 20, 20);
 		glPopMatrix();
 	}
 }
@@ -1167,13 +1167,11 @@ void display3D()
 		gluLookAt(towerX, yPos + 5, towerZ, towerX, 0.0, 0.0, 0.0, 1.0, 0.0);
 	}
 
-	fireLaser(laserV.fired);
-	drawLaser(laserV.fired);
-
 	glEnable(GL_TEXTURE_GEN_S);
 	glEnable(GL_TEXTURE_GEN_T);
 
-
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	// Draw ground
 	glPushMatrix();
@@ -1185,37 +1183,48 @@ void display3D()
 	//draw3DSubdivisionCurve();
 	//draw3DControlPoints();
 
-	drawEnLaser(laserE1.En1fired);
-	fireEnLaser(laserE1.En1fired);
-	drawEnLaser(laserE2.En2fired);
-	fireEnLaser(laserE2.En2fired);
-	drawEnLaser(laserE3.En3fired);
-	fireEnLaser(laserE3.En3fired);
-	drawEnLaser(laserE4.En4fired);
-	fireEnLaser(laserE4.En4fired);
-
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
+	glPushMatrix();
+	glTranslatef(0, 2, 0);
+	drawEnLaser(laserE1.En1fired);
+	fireEnLaser(laserE1.En1fired);
+	glPopMatrix();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
+	glPushMatrix();
+	glTranslatef(0, 2, 0);
+	drawEnLaser(laserE2.En2fired);
+	fireEnLaser(laserE2.En2fired);
+	glPopMatrix();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
+	glPushMatrix();
+	glTranslatef(0, 2, 0);
+	drawEnLaser(laserE3.En3fired);
+	fireEnLaser(laserE3.En3fired);
+	glPopMatrix();
 	glPopMatrix();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 10.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 4.0);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
+	glPushMatrix();
+	glTranslatef(0, 2, 0);
+	drawEnLaser(laserE4.En4fired);
+	fireEnLaser(laserE4.En4fired);
+	glPopMatrix();
 	glPopMatrix();
 
 	glPushMatrix();
@@ -1366,35 +1375,29 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
 
-		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
-		laserE1.lEnZPos = subcurve.curvePoints[currentCurvePoint].y;
+
+		/* laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
+		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
 		laserE1.lEnAngle = robotAngle + 180;
 		laserE1.En1fired = 1;
-
 		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
-		laserE2.lEn2ZPos = subcurve.curvePoints[currentCurvePoint].y - 2;
+		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
 		laserE2.lEn2Angle = robotAngle + 180;
 		laserE2.En2fired = 1;
 
 		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
-		laserE3.lEn3ZPos = subcurve.curvePoints[currentCurvePoint].y + 3;
+		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
 		laserE3.lEn3Angle = robotAngle + 180;
 		laserE3.En3fired = 1;
-
+		*/
 		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10.0;
-		laserE4.lEn4ZPos = subcurve.curvePoints[currentCurvePoint].y + 4;
+		laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
 		laserE4.lEn4Angle = robotAngle + 180;
 		laserE4.En4fired = 1;
 
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
-		}
-		if (towerDMG < 3) {
-			laserV.laserXPos = towerX;
-			laserV.laserZPos = zPos;
-			laserV.laserAngle = towerAngle;
-			laserV.fired = 1;
 		}
 		break;
 		break;
@@ -1464,4 +1467,57 @@ void specialKeyHandler(int key, int x, int y)
 		break;
 	}
 	glutPostRedisplay();
+
 }
+
+/*
+
+void draw3DSubdivisionCurve()
+{
+	// Subdivide the given curve
+	computeSubdivisionCurve(&subcurve);
+
+	int i = 0;
+
+	glPushMatrix();
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, threeDCurve_ambient);
+	glBegin(GL_LINE_STRIP);
+	for (i = 0; i < subcurve.numCurvePoints; i++) {
+		glVertex3f(subcurve.curvePoints[i].x, 0.5, -subcurve.curvePoints[i].y);
+	}
+	glEnd();
+	glPopMatrix();
+}
+
+
+
+void draw3DControlPoints()
+{
+
+	int i, j;
+	for (i = 0; i < subcurve.numControlPoints; i++) {
+		glPushMatrix();
+		glTranslatef(circles[i].circleCenter.x, 0.5, -circles[i].circleCenter.y);
+		// for the hoveredCircle, draw an outline and change its colour
+		if (i == hoveredCircle) {
+			// outline
+			//glColor3f(0.0, 1.0, 0.0);
+			glBegin(GL_LINE_LOOP);
+			for (j = 0; j < numCirclePoints; j++) {
+				glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
+			}
+			glEnd();
+			// colour change
+			//glColor3f(0.5, 0.0, 1.0);
+		}
+		glBegin(GL_LINE_LOOP);
+		for (j = 0; j < numCirclePoints; j++) {
+			glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
+		}
+		glEnd();
+		glPopMatrix();
+
+	}
+}
+
+*/
