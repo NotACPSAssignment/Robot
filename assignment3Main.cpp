@@ -126,6 +126,8 @@ static GLfloat light_ambient[] = { 0.2F, 0.2F, 0.2F, 1.0F };
 static GLfloat model_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
 
 
+boolean camera = false;
+
 // Mouse button
 int currentButton;
 
@@ -1157,7 +1159,13 @@ void display3D()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	if (camera) {
+		gluLookAt(eyeX, eyeY, eyeZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	}
+	else {
+		gluLookAt(towerX, yPos + 5, towerZ, towerX, 0.0, 0.0, 0.0, 1.0, 0.0);
+	}
 
 	glEnable(GL_TEXTURE_GEN_S);
 	glEnable(GL_TEXTURE_GEN_T);
@@ -1416,6 +1424,10 @@ void keyboard(unsigned char key, int x, int y)
 		}
 
 		break;
+	case 'p':
+		camera = !camera;
+
+		break;
 	}
 
 	glutPostRedisplay();   // Trigger a window redisplay
@@ -1436,7 +1448,7 @@ void specialKeyHandler(int key, int x, int y)
 			// add code here
 			towerX -= 0.5;
 			robotAngle2 -= 30;
-			zPos = zPos;
+			//zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
 		}
@@ -1455,6 +1467,7 @@ void specialKeyHandler(int key, int x, int y)
 		break;
 	}
 	glutPostRedisplay();
+
 }
 
 /*
