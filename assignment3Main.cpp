@@ -1173,9 +1173,9 @@ void display3D()
 	groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
 
-	//computeSubdivisionCurve(&subcurve);
-	draw3DSubdivisionCurve();
-	draw3DControlPoints();
+	computeSubdivisionCurve(&subcurve);
+	//draw3DSubdivisionCurve();
+	//draw3DControlPoints();
 
 	drawEnLaser(laserE1.En1fired);
 	fireEnLaser(laserE1.En1fired);
@@ -1454,6 +1454,7 @@ void specialKeyHandler(int key, int x, int y)
 	glutPostRedisplay();
 }
 
+/*
 
 void draw3DSubdivisionCurve()
 {
@@ -1503,3 +1504,4 @@ void draw3DControlPoints()
 	}
 }
 
+*/
