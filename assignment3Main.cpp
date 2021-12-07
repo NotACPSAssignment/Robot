@@ -181,9 +181,17 @@ void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
 
 
 void drawEnLaser1(int on);
+void fireAni1(int value);
+
 void drawEnLaser2(int on);
+void fireAni2(int value);
+
 void drawEnLaser3(int on);
+void fireAni3(int value);
+
 void drawEnLaser4(int on);
+void fireAni4(int value);
+
 void fireEnLaser(int on);
 
 static GLfloat textureMap1[64][64][3];
@@ -503,7 +511,8 @@ void drawBot()
 boolean shot = false;
 int spinning = 0;
 float backwards = 0;
-float yang = 0, xang =0;
+float yang = 0, xang = 0;
+
 void drawRobot()
 {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
@@ -521,13 +530,13 @@ void drawRobot()
 
 	if (shot) {
 		spinning++;
-		backwards += 0.5; 
-		
+		backwards += 0.5;
+
 		glTranslatef(backwards, 0.0, 0.0);
 		glRotatef(yang, 1.0, 1.0, 0.0);
 		glTranslatef(-0.4, 0.25, 0.0);
 		glRotatef(xang, 0.0, 0.0, 1.0);
-		
+
 		yang = yang + 1.35;
 		if (yang > 360.0)
 			yang = 0.0;
@@ -1209,6 +1218,59 @@ void animationHandler(int param)
 		glutTimerFunc(100, animationHandler, 0);
 	}
 
+
+void fireAni1(int value) {
+	float rTime = rand() % 3 + 1.7;
+	if (col3 == 0) {
+		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
+		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
+		laserE1.lEnAngle = robotAngle + 180;
+		laserE1.En1fired = 1;
+	}
+	if (currentCurvePoint == 0) {
+		laserE1.En1fired = 0;
+	}
+	glutTimerFunc(rTime * 1000, fireAni1, 0);
+}
+void fireAni2(int value) {
+	float rTime = rand() % 3 + 1.7;
+	if (col2 == 0) {
+		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
+		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
+		laserE2.lEn2Angle = robotAngle + 180;
+		laserE2.En2fired = 1;
+	}
+	if (currentCurvePoint == 0) {
+		laserE2.En2fired = 0;
+	}
+	glutTimerFunc(rTime * 970, fireAni2, 0);
+}
+void fireAni3(int value) {
+	float rTime = rand() % 3 + 1.7;
+	if (col4 == 0) {
+		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
+		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
+		laserE3.lEn3Angle = robotAngle + 180;
+		laserE3.En3fired = 1;
+	}
+	if (currentCurvePoint == 0) {
+		laserE3.En3fired = 0;
+	}
+	glutTimerFunc(rTime * 1100, fireAni3, 0);
+}
+void fireAni4(int value) {
+	float rTime = rand() % 3 + 1.7;
+	if (col1 == 0) {
+		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
+		laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
+		laserE4.lEn4Angle = robotAngle + 180;
+		laserE4.En4fired = 1;
+	}
+	if (currentCurvePoint == 0) {
+		laserE4.En4fired = 0;
+	}
+	glutTimerFunc(rTime * 1100, fireAni4, 0);
+
 }
 
 
@@ -1748,42 +1810,6 @@ void keyboard(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 32:
-
-		laserV.laserXPos = towerX;
-		laserV.laserZPos = zPos;
-		laserV.laserAngle = towerAngle;
-		laserV.fired = 1;
-
-		if (col3 == 0) {
-			laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
-			laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
-			laserE1.lEnAngle = robotAngle + 180;
-			laserE1.En1fired = 1;
-		}
-		if (col2 == 0) {
-			laserE1.En1fired = 1;
-			laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
-			laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
-			laserE2.lEn2Angle = robotAngle + 180;
-			laserE2.En2fired = 1;
-		}
-
-		if (col4 == 0) {
-			laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
-			laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
-			laserE3.lEn3Angle = robotAngle + 180;
-			laserE3.En3fired = 1;
-		}
-
-
-		if (col1 == 0) {
-			laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
-			laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
-			laserE4.lEn4Angle = robotAngle + 180;
-			laserE4.En4fired = 1;
-		}
-
-
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
@@ -1794,6 +1820,10 @@ void keyboard(unsigned char key, int x, int y)
 		// Add code to create timer and call animation handler
 		glutSetWindow(window3D);
 		animationHandler(1);
+		fireAni1(1);
+		fireAni2(1);
+		fireAni3(1);
+		fireAni4(1);
 		// Use this to set to 3D window and redraw it
 		glutSetWindow(window3D);
 		glutPostRedisplay();
@@ -1803,7 +1833,7 @@ void keyboard(unsigned char key, int x, int y)
 		shot1 = false;
 		shot2 = false;
 		shot3 = false;
-		shot4 = false; 
+		shot4 = false;
 		currentCurvePoint = 0;
 		towerDMG = 0;
 		bot1Scale = 1.0;
