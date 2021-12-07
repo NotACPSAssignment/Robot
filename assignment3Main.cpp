@@ -179,7 +179,10 @@ void makeTextures();
 void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
 
 
-void drawEnLaser(int on);
+void drawEnLaser1(int on);
+void drawEnLaser2(int on);
+void drawEnLaser3(int on);
+void drawEnLaser4(int on);
 void fireEnLaser(int on);
 
 static GLfloat textureMap1[64][64][3];
@@ -952,8 +955,8 @@ void drawLaser(int on) {
 		glPushMatrix();
 		glTranslatef(laserV.laserXPos, laserV.laserYPos, laserV.laserZPos);
 		glRotatef(laserV.laserAngle, 0, 1, 0);
-		glScalef(0.5, 0.5, 1);
-		glutSolidCone(2, 3, 4, 4);
+		glScalef(0.1, 0.1, 1);
+		gluSphere(gluNewQuadric(), 2, 12, 12);
 		glPopMatrix();
 	}
 }
@@ -981,7 +984,7 @@ void fireLaser(int on) {
 	glutPostRedisplay();
 }
 
-void drawEnLaser(int on) {
+void drawEnLaser1(int on) {
 
 	if (on == 1) {
 		glPushMatrix();
@@ -990,7 +993,12 @@ void drawEnLaser(int on) {
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
+	}
+}
 
+void drawEnLaser2(int on) {
+
+	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE2.lEn2XPos, laserE2.lEn2YPos, laserE2.lEn2ZPos);
 		glRotatef(laserE2.lEn2Angle, 0, 1, 0);
@@ -998,15 +1006,23 @@ void drawEnLaser(int on) {
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
 
+	}
+}
+void drawEnLaser3(int on) {
 
+	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE3.lEn3XPos, laserE3.lEn3YPos, laserE3.lEn3ZPos);
 		glRotatef(laserE3.lEn3Angle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
+	}
+}
 
+void drawEnLaser4(int on) {
 
+	if (on == 1) {
 		glPushMatrix();
 		glTranslatef(laserE4.lEn4XPos, laserE4.lEn4YPos, laserE4.lEn4ZPos);
 		glRotatef(laserE4.lEn4Angle, 0, 1, 0);
@@ -1016,13 +1032,15 @@ void drawEnLaser(int on) {
 	}
 }
 
+
+
 void fireEnLaser(int on) {
 
 	if (on == 1) {
 
 		if (laserE1.lEnTimer > 0) {
-			laserE1.lEnXPos -= 0.2 * sin((laserE1.lEnAngle * M_PI) / 180);
-			laserE1.lEnZPos -= 0.2 * cos((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnXPos -= 0.15 * sin((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnZPos -= 0.15 * cos((laserE1.lEnAngle * M_PI) / 180);
 			laserE1.lEnTimer -= 0.01;
 
 		}
@@ -1035,8 +1053,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE2.lEn2Timer > 0) {
-			laserE2.lEn2XPos -= 0.2 * sin((laserE2.lEn2Angle * M_PI) / 180);
-			laserE2.lEn2ZPos -= 0.2 * cos((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2XPos -= 0.15 * sin((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2ZPos -= 0.15 * cos((laserE2.lEn2Angle * M_PI) / 180);
 			laserE2.lEn2Timer -= 0.01;
 
 		}
@@ -1049,8 +1067,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE3.lEn3Timer > 0) {
-			laserE3.lEn3XPos -= 0.2 * sin((laserE3.lEn3Angle * M_PI) / 180);
-			laserE3.lEn3ZPos -= 0.2 * cos((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3XPos -= 0.15 * sin((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3ZPos -= 0.15 * cos((laserE3.lEn3Angle * M_PI) / 180);
 			laserE3.lEn3Timer -= 0.01;
 
 		}
@@ -1063,8 +1081,8 @@ void fireEnLaser(int on) {
 		}
 
 		if (laserE4.lEn4Timer > 0) {
-			laserE4.lEn4XPos -= 0.2 * sin((laserE4.lEn4Angle * M_PI) / 180);
-			laserE4.lEn4ZPos -= 0.2 * cos((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4XPos -= 0.15 * sin((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4ZPos -= 0.15 * cos((laserE4.lEn4Angle * M_PI) / 180);
 			laserE4.lEn4Timer -= 0.01;
 
 		}
@@ -1205,36 +1223,36 @@ void display3D()
 	// Lasers firing -------------------------------------------------------------------------------------------------------------------------------------
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[2]);
-	glTranslatef(0, 2.7, 2.7);
+	glTranslatef(0, 2.7, 3);
 	drawLaser(laserV.fired);
 	fireLaser(laserV.fired);
 	glPopMatrix();
-	/*
+
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
-	drawEnLaser(laserE1.En1fired);
+	drawEnLaser1(laserE1.En1fired);
 	fireEnLaser(laserE1.En1fired);
 	glPopMatrix();
 
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
-	drawEnLaser(laserE2.En2fired);
+	drawEnLaser2(laserE2.En2fired);
 	fireEnLaser(laserE2.En2fired);
 	glPopMatrix();
 
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
-	drawEnLaser(laserE3.En3fired);
+	drawEnLaser3(laserE3.En3fired);
 	fireEnLaser(laserE3.En3fired);
 	glPopMatrix();
-	*/
+
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
-	drawEnLaser(laserE4.En4fired);
+	drawEnLaser4(laserE4.En4fired);
 	fireEnLaser(laserE4.En4fired);
 	glPopMatrix();
 
@@ -1414,25 +1432,34 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
-		/*
-		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
-		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
-		laserE1.lEnAngle = robotAngle + 180;
-		laserE1.En1fired = 1;
-		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
-		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
-		laserE2.lEn2Angle = robotAngle + 180;
-		laserE2.En2fired = 1;
-		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
-		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
-		laserE3.lEn3Angle = robotAngle + 180;
-		laserE3.En3fired = 1;
-		*/
+		if (col3 == 0) {
+			laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
+			laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
+			laserE1.lEnAngle = robotAngle + 180;
+			laserE1.En1fired = 1;
+		}
+		if (col2 == 0) {
+			laserE1.En1fired = 1;
+			laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
+			laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
+			laserE2.lEn2Angle = robotAngle + 180;
+			laserE2.En2fired = 1;
+		}
 
-		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
-		laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
-		laserE4.lEn4Angle = robotAngle + 180;
-		laserE4.En4fired = 1;
+		if (col4 == 0) {
+			laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
+			laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
+			laserE3.lEn3Angle = robotAngle + 180;
+			laserE3.En3fired = 1;
+		}
+
+
+		if (col1 == 0) {
+			laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10;
+			laserE4.lEn4ZPos = -subcurve.curvePoints[currentCurvePoint].y + 4;
+			laserE4.lEn4Angle = robotAngle + 180;
+			laserE4.En4fired = 1;
+		}
 
 		if (towerDMG == 3)
 		{
@@ -1456,6 +1483,10 @@ void keyboard(unsigned char key, int x, int y)
 		bot2Scale = 1.0;
 		bot3Scale = 1.0;
 		bot4Scale = 1.0;
+		col1 = 0;
+		col2 = 0;
+		col3 = 0;
+		col4 = 0;
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
@@ -1582,34 +1613,42 @@ void detectEnemyCollision() {
 	if (1 == 0) {}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -1) {
 		bot1Scale = 0.1;
+		col1 = 1;
 		printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -1) {
 		bot2Scale = 0.1;
+		col2 = 1;
 		printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -1) {
 		bot3Scale = 0.1;
+		col3 = 1;
 		printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -1) {
 		bot4Scale = 0.1;
+		col4 = 1;
 		printf("Collision with bot 4 detected");
 	}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 4.0) < 4) {
 		bot1Scale = 0.1;
+		col1 = 1;
 		printf("Collision with bot 1 detected");
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y - 3.0) < 4) {
 		bot2Scale = 0.1;
+		col2 = 1;
 		printf("Collision with bot 2 detected");
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y) < 4) {
 		bot3Scale = 0.1;
+		col3 = 1;
 		printf("Collision with bot 3 detected");
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 2.0) < 5) {
 		bot4Scale = 0.1;
+		col4 = 1;
 		printf("Collision with bot 4 detected");
 	}
 	printf("%f\n", bot4ZDis);
