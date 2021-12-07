@@ -1217,7 +1217,7 @@ void animationHandler(int param)
 		glutPostRedisplay();
 		glutTimerFunc(100, animationHandler, 0);
 	}
-
+}
 
 void fireAni1(int value) {
 	float rTime = rand() % 3 + 1.7;
