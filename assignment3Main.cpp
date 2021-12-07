@@ -490,10 +490,7 @@ void drawBot()
 
 void drawRobot()
 {
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
+
 	glPushMatrix();
 	glTranslatef(xPos, yPos, zPos);
 	glPushMatrix();
@@ -695,10 +692,6 @@ void drawCannon()
 
 void drawTower() {
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-	//glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
 
 	glRotatef(-45, 0, 0, 1);
 	glPushMatrix();
@@ -1221,7 +1214,7 @@ void display3D()
 	glPopMatrix();
 
 	glPushMatrix();
-	glScalef(bot1Scale,bot1Scale,bot1Scale);
+	glScalef(bot1Scale, bot1Scale, bot1Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 10.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 4.0);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
@@ -1452,15 +1445,9 @@ void specialKeyHandler(int key, int x, int y)
 	case GLUT_KEY_LEFT:
 		if (towerDMG < 3) {
 			// add code here
-			if (towerX > -9) {
-				towerX -= 0.5;
-				robotAngle2 -= 30;
-			}
-			else {
-				towerX = -9;
-			}
-			
-			//zPos = zPos;
+			towerX -= 0.5;
+			robotAngle2 -= 30;
+			zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
 		}
@@ -1469,13 +1456,8 @@ void specialKeyHandler(int key, int x, int y)
 	case GLUT_KEY_RIGHT:
 		if (towerDMG < 3) {
 			// add code here;
-			if (towerX < 10) {
-				towerX += 0.5;
-				robotAngle2 += 30;
-			}
-			else {
-				towerX = 10;
-			}
+			towerX += 0.5;
+			robotAngle2 += 30;
 			zPos = zPos;
 			glutSetWindow(window3D);
 			glutPostRedisplay();
@@ -1537,33 +1519,53 @@ void draw3DControlPoints()
 }
 
 */
-
 void detectEnemyCollision() {
 
-	float bot1XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x -10.0));
-	float bot1ZDis = abs(laserV.laserZPos - (subcurve.curvePoints[currentCurvePoint].y + 4.0));
+	float bot1XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x - 10.0));
+	float bot1ZDis = laserV.laserZPos - (-subcurve.curvePoints[currentCurvePoint].y + 4.0);
 
 	float bot2XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x - 6.0));
-	float bot2ZDis = abs(laserV.laserZPos - (subcurve.curvePoints[currentCurvePoint].y - 3.0));
+	float bot2ZDis = laserV.laserZPos - (-subcurve.curvePoints[currentCurvePoint].y - 3.0);
 
 	float bot3XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x));
-	float bot3ZDis = abs(laserV.laserZPos - (subcurve.curvePoints[currentCurvePoint].y));
+	float bot3ZDis = laserV.laserZPos - (-subcurve.curvePoints[currentCurvePoint].y);
 
 	float bot4XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x + 8.0));
-	float bot4ZDis = abs(laserV.laserZPos - (subcurve.curvePoints[currentCurvePoint].y + 2.0));
+	float bot4ZDis = laserV.laserZPos - (-subcurve.curvePoints[currentCurvePoint].y + 2.0);
 	//printf("x:%f, z:%f\n", bot3XDis, bot3ZDis);
-	
-	if (bot1XDis < 1.5 && bot1ZDis < 1) {
+
+	if(1==0){}
+	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -1) {
 		bot1Scale = 0.1;
 		printf("Collision with bot 1 detected");
-	}else if(bot2XDis < 1.5 && bot2ZDis < 1) {
+	}
+	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -1) {
 		bot2Scale = 0.1;
 		printf("Collision with bot 2 detected");
-	}else if (bot3XDis < 1.5 && bot3ZDis < 1 ) {
+	}
+	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -1) {
 		bot3Scale = 0.1;
 		printf("Collision with bot 3 detected");
-	}else if(bot4XDis < 1.5 && bot4ZDis < 1) {
+	}
+	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -1) {
 		bot4Scale = 0.1;
 		printf("Collision with bot 4 detected");
 	}
+	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 4.0) < 4) {
+		bot1Scale = 0.1;
+		printf("Collision with bot 1 detected");
+	}
+	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y - 3.0) < 4) {
+		bot2Scale = 0.1;
+		printf("Collision with bot 2 detected");
+	}
+	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y) < 4) {
+		bot3Scale = 0.1;
+		printf("Collision with bot 3 detected");
+	}
+	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 2.0) < 5) {
+		bot4Scale = 0.1;
+		printf("Collision with bot 4 detected");
+	}
+	printf("%f\n",bot4ZDis);
 }
