@@ -719,11 +719,12 @@ void drawTowerCannon() {
 	glRotatef(wheelRot, 1, 1, 0);
 	glPushMatrix();
 	if (towerDMG == 1) {
-		glRotatef(45, 1, 0, 0);
+		glRotatef(25, 1, 0, 0);
 
 	}
 	else if (towerDMG == 2) {
 		glRotatef(-25, 1, 0, 0);
+		glRotatef(45, 0, 1, 0);
 
 	}
 	else if (towerDMG == 3) {
@@ -894,7 +895,7 @@ void drawLaser(int on) {
 
 	if (on == 1) {
 		glPushMatrix();
-		glTranslatef(laserV.laserXPos, laserV.laserYPos, laserV.laserZPos);
+		glTranslatef(laserV.laserXPos, laserV.laserYPos + 1, laserV.laserZPos);
 		glRotatef(laserV.laserAngle, 0, 1, 0);
 		glScalef(0.5, 0.5, 1);
 		glutSolidCone(2, 3, 4, 4);
