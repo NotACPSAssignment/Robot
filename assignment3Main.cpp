@@ -47,6 +47,7 @@ float bot3Scale = 1.0;
 float bot4Scale = 1.0;
 time_t timer;
 
+
 // Control Robot body rotation on base
 float robotAngle = 0.0;
 
@@ -1197,12 +1198,16 @@ void display3D()
 	//draw3DControlPoints();
 
 	glPushMatrix();
+
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
 	drawEnLaser(laserE1.En1fired);
 	fireEnLaser(laserE1.En1fired);
 	glPopMatrix();
 	glPushMatrix();
+	glScalef(bot2Scale, bot2Scale, bot2Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
+
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glTranslatef(0, 2.7, 0);
 	drawEnLaser(laserE2.En2fired);
@@ -1224,6 +1229,10 @@ void display3D()
 	glPushMatrix();
 	glScalef(bot3Scale, bot3Scale, bot3Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
+
+	glScalef(bot4Scale, bot4Scale, bot4Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
+
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
 	glPopMatrix();
@@ -1250,6 +1259,8 @@ void display3D()
 	glPopMatrix();
 
 	glPushMatrix();
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
 	glTranslatef(towerX, 0.9, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
@@ -1399,12 +1410,13 @@ void keyboard(unsigned char key, int x, int y)
 		laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
 		laserE1.lEnAngle = robotAngle + 180;
 		laserE1.En1fired = 1;
+
 		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
-		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 3;
+		laserE2.lEn2ZPos = -subcurve.curvePoints[currentCurvePoint].y - 2;
 		laserE2.lEn2Angle = robotAngle + 180;
 		laserE2.En2fired = 1;
 		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
-		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 2;
+		laserE3.lEn3ZPos = -subcurve.curvePoints[currentCurvePoint].y + 3;
 		laserE3.lEn3Angle = robotAngle + 180;
 		laserE3.En3fired = 1;
 
@@ -1502,6 +1514,7 @@ void specialKeyHandler(int key, int x, int y)
 }
 
 /*
+
 void draw3DSubdivisionCurve()
 {
 	// Subdivide the given curve
@@ -1543,6 +1556,7 @@ void draw3DControlPoints()
 	}
 }
 */
+
 void detectEnemyCollision() {
 
 	float bot1XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x - 10.0));
@@ -1575,7 +1589,7 @@ void detectEnemyCollision() {
 		bot4Scale = 0.1;
 		printf("Collision with bot 4 detected");
 	}
-	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 4.0) < 4) {
+	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -9) {
 		bot1Scale = 0.1;
 		printf("Collision with bot 1 detected");
 	}
@@ -1591,5 +1605,6 @@ void detectEnemyCollision() {
 		bot4Scale = 0.1;
 		printf("Collision with bot 4 detected");
 	}
-	printf("%f\n", bot4ZDis);
+	printf("%f\n", bot1ZDis);
+
 }
