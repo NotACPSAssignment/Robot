@@ -427,7 +427,6 @@ void makeTextures()
 
 void drawGround() {
 	glPushMatrix();
-
 	glBegin(GL_QUADS);
 	glNormal3f(0, 1, 0);
 	glVertex3f(-120.0f, -1.0f, -120.0f);
@@ -1029,9 +1028,8 @@ void display3D()
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	// Draw ground
 	glPushMatrix();
-	glTranslatef(0.0, -20.0, 10.0);
-	drawGround();
-	//groundMesh->DrawMesh(meshSize);
+	glScalef(100, 100, 100);
+	groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
 
 	computeSubdivisionCurve(&subcurve);
@@ -1060,11 +1058,10 @@ void display3D()
 	drawBot();
 	glPopMatrix();
 
-
 	glPushMatrix();
 	drawLaser(laserV.fired);
 	fireLaser(laserV.fired);
-	glTranslatef(towerX, 0.0, 10);
+	glTranslatef(towerX, 0.9, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	glBindTexture(GL_TEXTURE_2D, tex[2]);
