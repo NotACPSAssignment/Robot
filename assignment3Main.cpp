@@ -161,7 +161,6 @@ void mouse(int button, int state, int x, int y);
 void mouseMotionHandler(int xMouse, int yMouse);
 void keyboard(unsigned char key, int x, int y);
 void animationHandler(int param);
-void drawRobot();
 void drawBody();
 void drawHead();
 void drawLowerBody();
@@ -488,78 +487,6 @@ void drawGround() {
 	glVertex3f(120.0f, -1.0f, -120.0f);
 	glEnd();
 	glPopMatrix();
-}
-
-void drawBot()
-{
-	glPushMatrix();
-
-	glTranslatef(0, 1.0, 0);
-
-
-	glPushMatrix();
-	glRotatef(90, 0.0, 1.0, 0.0);
-	glTranslatef(0, 1.0, 0.0);
-	glScalef(0.2, 0.2, 0.2);
-	drawRobot();
-	glPopMatrix();
-
-
-	glPopMatrix();
-
-}
-boolean shot = false;
-int spinning = 0;
-float backwards = 0;
-float yang = 0, xang = 0;
-
-void drawRobot()
-{
-	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, robotBody_mat_specular);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, robotBody_mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SHININESS, robotBody_mat_shininess);
-
-	glPushMatrix();
-	glTranslatef(xPos, yPos, zPos);
-	glPushMatrix();
-	glRotatef(angle, 0.0, 1.0, 0.0);
-	drawLowerBody();
-	glPopMatrix();
-	glPushMatrix();
-
-	if (shot) {
-		spinning++;
-		backwards += 0.5;
-
-		glTranslatef(backwards, 0.0, 0.0);
-		glRotatef(yang, 1.0, 1.0, 0.0);
-		glTranslatef(-0.4, 0.25, 0.0);
-		glRotatef(xang, 0.0, 0.0, 1.0);
-
-		yang = yang + 1.35;
-		if (yang > 360.0)
-			yang = 0.0;
-		xang = xang - 1.15;
-		if (xang < 0.0)
-			xang = 360.0;
-	}
-	else if (shot == false) {
-		backwards = 0;
-	}
-
-	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
-	drawBody();
-	glPushMatrix();
-	drawHead();
-	glPushMatrix();
-	drawCannon();
-	glPopMatrix();
-	glPopMatrix();
-
-	glPopMatrix();
-	glPopMatrix();
-
 }
 
 void drawBody()
@@ -1208,11 +1135,7 @@ void animationHandler(int param)
 
 		nonConvertedRobotAngle = atan(((towerX)-(1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((towerZ)-(1.0 * subcurve.curvePoints[currentCurvePoint].x)));
 		robotAngle = ((nonConvertedRobotAngle / M_PI) * 180.0);
-		//if (robotAngle > 0) {
-		//	robotAngle = -(180 - robotAngle);
-		//}
 
-		//printf("Current angel: %2f \n", angle);
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		glutTimerFunc(100, animationHandler, 0);
@@ -1284,28 +1207,10 @@ void mouse(int button, int state, int x, int y)
 	switch (button)
 	{
 	case GLUT_LEFT_BUTTON:
-		if (state == GLUT_DOWN)
-		{
-			glutIdleFunc(aimUp);
-		}
-		if (state == GLUT_UP) {
-			glutIdleFunc(NULL);
-		}
-		if (towerDMG == 3) {
-			glutIdleFunc(NULL);
-		}
+	
 		break;
 	case GLUT_RIGHT_BUTTON:
-		if (state == GLUT_DOWN)
-		{
-			glutIdleFunc(aimDown);
-		}
-		if (state == GLUT_UP) {
-			glutIdleFunc(NULL);
-		}
-		if (towerDMG == 3) {
-			glutIdleFunc(NULL);
-		}
+		
 		break;
 	default:
 		break;
@@ -1513,31 +1418,31 @@ void initSubdivisionCurve() {
 
 	x = 4 * cos(M_PI * 3);
 	y = 4 * sin(M_PI * 0.5);
-	printf("%f, %f\n", x, y);
+	
 	subcurve.controlPoints[0].x = 1.5;
 	subcurve.controlPoints[0].y = 24;
 
 	x = 4 * cos(M_PI * 0.5);
 	y = 4 * sin(M_PI * 0.5);
-	printf("%f, %f\n", x, y);
+	
 	subcurve.controlPoints[1].x = 0;
 	subcurve.controlPoints[1].y = 12;
 
 	x = 4 * cos(M_PI * 0.3);
 	y = 4 * sin(M_PI * 0.3);
-	printf("%f, %f\n", x, y);
+	
 	subcurve.controlPoints[2].x = 2.35;
 	subcurve.controlPoints[2].y = 6.4;
 
 	x = 4 * cos(-M_PI * 0.2);
 	y = 4 * sin(-M_PI * 0.2);
-	printf("%f, %f\n", x, y);
+	
 	subcurve.controlPoints[3].x = 5;
 	subcurve.controlPoints[3].y = -0.6;
 
 	x = 4 * cos(-M_PI * 0.28);
 	y = 4 * sin(-M_PI * 0.28);
-	printf("%f, %f\n", x, y);
+	
 	subcurve.controlPoints[4].x = 3.2;
 	subcurve.controlPoints[4].y = -3;
 
@@ -1919,49 +1824,6 @@ void specialKeyHandler(int key, int x, int y)
 	glutPostRedisplay();
 }
 
-/*
-void draw3DSubdivisionCurve()
-{
-	// Subdivide the given curve
-	computeSubdivisionCurve(&subcurve);
-	int i = 0;
-	glPushMatrix();
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, threeDCurve_ambient);
-	glBegin(GL_LINE_STRIP);
-	for (i = 0; i < subcurve.numCurvePoints; i++) {
-		glVertex3f(subcurve.curvePoints[i].x, 0.5, -subcurve.curvePoints[i].y);
-	}
-	glEnd();
-	glPopMatrix();
-}
-void draw3DControlPoints()
-{
-	int i, j;
-	for (i = 0; i < subcurve.numControlPoints; i++) {
-		glPushMatrix();
-		glTranslatef(circles[i].circleCenter.x, 0.5, -circles[i].circleCenter.y);
-		// for the hoveredCircle, draw an outline and change its colour
-		if (i == hoveredCircle) {
-			// outline
-			//glColor3f(0.0, 1.0, 0.0);
-			glBegin(GL_LINE_LOOP);
-			for (j = 0; j < numCirclePoints; j++) {
-				glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-			}
-			glEnd();
-			// colour change
-			//glColor3f(0.5, 0.0, 1.0);
-		}
-		glBegin(GL_LINE_LOOP);
-		for (j = 0; j < numCirclePoints; j++) {
-			glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
-		}
-		glEnd();
-		glPopMatrix();
-	}
-}
-*/
-
 void detectEnemyCollision() {
 
 	float bot1XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x - 10.0));
@@ -1975,50 +1837,49 @@ void detectEnemyCollision() {
 
 	float bot4XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x + 8.0));
 	float bot4ZDis = laserV.laserZPos - (-subcurve.curvePoints[currentCurvePoint].y + 2.0);
-	//printf("x:%f, z:%f\n", bot3XDis, bot3ZDis);
 
 	if (1 == 0) {}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -1) {
 		shot1 = true;
 		//bot1Scale = 0.1;
 		col1 = 1;
-		//printf("Collision with bot 1 detected");
+
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -1) {
 		shot2 = true;
 		//bot2Scale = 0.1;
 		col2 = 1;
-		//printf("Collision with bot 2 detected");
+
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -1) {
 		shot3 = true;
 		col3 = 1;
-		//printf("Collision with bot 3 detected");
+
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -1) {
 		shot4 = true;
 		col4 = 1;
-		//printf("Collision with bot 4 detected");
+
 	}
 	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -9) {
 		shot1 = true;
 		col1 = 1;
-		//printf("Collision with bot 1 detected");
+
 	}
 	else if (bot2XDis < 1.5 && bot2ZDis < 1 && bot2ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y - 3.0) < 4) {
 		shot2 = true;
 		col2 = 1;
-		//printf("Collision with bot 2 detected");
+
 	}
 	else if (bot3XDis < 1.5 && bot3ZDis < 1 && bot3ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y) < 4) {
 		shot3 = true;
 		col3 = 1;
-		//printf("Collision with bot 3 detected");
+
 	}
 	else if (bot4XDis < 1.5 && bot4ZDis < 1 && bot4ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 2.0) < 5) {
 		shot4 = true;
 		col4 = 1;
-		//printf("Collision with bot 4 detected");
+
 	}
 
 }
