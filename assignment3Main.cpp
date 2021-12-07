@@ -47,6 +47,7 @@ float bot3Scale = 1.0;
 float bot4Scale = 1.0;
 time_t timer;
 
+
 // Control Robot body rotation on base
 float robotAngle = 0.0;
 
@@ -1220,6 +1221,7 @@ void display3D()
 	//draw3DSubdivisionCurve();
 	//draw3DControlPoints();
 
+
 	// Lasers firing -------------------------------------------------------------------------------------------------------------------------------------
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex[2]);
@@ -1264,18 +1266,26 @@ void display3D()
 	drawBot();
 	glPopMatrix();
 
+
 	glPushMatrix();
 	glScalef(bot2Scale, bot2Scale, bot2Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x - 6.0, 0, -subcurve.curvePoints[currentCurvePoint].y - 3.0);
+
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
+
 	drawBot();
 	glPopMatrix();
 
 	glPushMatrix();
+	glScalef(bot3Scale, bot3Scale, bot3Scale);
+	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
+
 	glScalef(bot4Scale, bot4Scale, bot4Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
+
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	drawBot();
+
 	glPopMatrix();
 
 	glPushMatrix();
@@ -1432,6 +1442,7 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
+
 		if (col3 == 0) {
 			laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
 			laserE1.lEnZPos = -subcurve.curvePoints[currentCurvePoint].y;
@@ -1460,6 +1471,7 @@ void keyboard(unsigned char key, int x, int y)
 			laserE4.lEn4Angle = robotAngle + 180;
 			laserE4.En4fired = 1;
 		}
+
 
 		if (towerDMG == 3)
 		{
@@ -1595,6 +1607,7 @@ void draw3DControlPoints()
 	}
 }
 */
+
 void detectEnemyCollision() {
 
 	float bot1XDis = abs(laserV.laserXPos - (subcurve.curvePoints[currentCurvePoint].x - 10.0));
@@ -1652,4 +1665,5 @@ void detectEnemyCollision() {
 		printf("Collision with bot 4 detected");
 	}
 	printf("%f\n", bot4ZDis);
+
 }
