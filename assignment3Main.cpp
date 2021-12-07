@@ -491,7 +491,10 @@ void drawBot()
 	glPopMatrix();
 
 }
-
+boolean shot = false;
+int spinning = 0;
+float backwards = 0;
+float yang = 0, xang =0;
 void drawRobot()
 {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, robotBody_mat_ambient);
@@ -506,6 +509,27 @@ void drawRobot()
 	drawLowerBody();
 	glPopMatrix();
 	glPushMatrix();
+
+	if (shot) {
+		spinning++;
+		backwards += 0.5; 
+		
+		glTranslatef(backwards, 0.0, 0.0);
+		glRotatef(yang, 1.0, 1.0, 0.0);
+		glTranslatef(-0.4, 0.25, 0.0);
+		glRotatef(xang, 0.0, 0.0, 1.0);
+		
+		yang = yang + 1.35;
+		if (yang > 360.0)
+			yang = 0.0;
+		xang = xang - 1.15;
+		if (xang < 0.0)
+			xang = 360.0;
+	}
+	else if (shot == false) {
+		backwards = 0;
+	}
+
 	glRotatef(robotAngle - 90, 0.0, 1.0, 0.0);
 	drawBody();
 	glPushMatrix();
@@ -514,6 +538,7 @@ void drawRobot()
 	drawCannon();
 	glPopMatrix();
 	glPopMatrix();
+
 	glPopMatrix();
 	glPopMatrix();
 
@@ -886,6 +911,7 @@ void animationHandler(int param)
 		glutPostRedisplay();
 		glutTimerFunc(100, animationHandler, 0);
 	}
+
 }
 
 
@@ -1460,6 +1486,9 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	case 'p':
 		camera = !camera;
+		break;
+	case 'b':
+		shot = !shot;
 		break;
 	}
 
