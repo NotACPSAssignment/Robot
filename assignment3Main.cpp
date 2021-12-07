@@ -1673,7 +1673,7 @@ void detectEnemyCollision() {
 		col4 = 1;
 		printf("Collision with bot 4 detected");
 	}
-	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -7 && (-subcurve.curvePoints[currentCurvePoint].y + 4.0) < 4) {
+	else if (bot1XDis < 1.5 && bot1ZDis < 1 && bot1ZDis > -9) {
 		bot1Scale = 0.1;
 		col1 = 1;
 		printf("Collision with bot 1 detected");
@@ -1693,6 +1693,5 @@ void detectEnemyCollision() {
 		col4 = 1;
 		printf("Collision with bot 4 detected");
 	}
-	printf("%f\n", bot4ZDis);
 
 }
