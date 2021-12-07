@@ -717,15 +717,15 @@ void drawTowerCannon() {
 	glRotatef(wheelRot, 1, 1, 0);
 	glPushMatrix();
 	if (towerDMG == 1) {
-		glRotatef(45, 1, 0, 0);
+		glRotatef(25, 1, -1, 0);
 
 	}
 	else if (towerDMG == 2) {
-		glRotatef(-25, 1, 0, 0);
+		glRotatef(-45, 1, -1, 0);
 
 	}
 	else if (towerDMG == 3) {
-		glRotatef(90, 0, 1, 0);
+		glRotatef(-90, 1, -1, 0);
 
 	}
 	glTranslatef(0, 0, -1);
@@ -819,7 +819,7 @@ void animationHandler(int param)
 
 		currentCurvePoint += 1;
 
-		
+
 
 		nonConvertedAngle = atan(((1.0 * subcurve.curvePoints[currentCurvePoint + 1].y) - (1.0 * subcurve.curvePoints[currentCurvePoint].y)) / ((1.0 * subcurve.curvePoints[currentCurvePoint + 1].x) - (1.0 * subcurve.curvePoints[currentCurvePoint].x)));
 
@@ -859,6 +859,9 @@ void mouse(int button, int state, int x, int y)
 		if (state == GLUT_UP) {
 			glutIdleFunc(NULL);
 		}
+		if (towerDMG == 3) {
+			glutIdleFunc(NULL);
+		}
 		break;
 	case GLUT_RIGHT_BUTTON:
 		if (state == GLUT_DOWN)
@@ -866,6 +869,9 @@ void mouse(int button, int state, int x, int y)
 			glutIdleFunc(aimDown);
 		}
 		if (state == GLUT_UP) {
+			glutIdleFunc(NULL);
+		}
+		if (towerDMG == 3) {
 			glutIdleFunc(NULL);
 		}
 		break;
@@ -1025,7 +1031,7 @@ void display3D()
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	// Draw ground
 	glPushMatrix();
-	glTranslatef(0.0, -20.0, 0.0);
+	glTranslatef(0.0, -20.0, 10.0);
 	drawGround();
 	//groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
@@ -1203,6 +1209,10 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
+		if (towerDMG == 3)
+		{
+			laserV.fired = 0;
+		}
 		break;
 		break;
 	case 'a':
@@ -1216,10 +1226,17 @@ void keyboard(unsigned char key, int x, int y)
 	case 'r':
 		// reset object position at beginning of curve
 		currentCurvePoint = 0;
+		towerDMG = 0;
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
 	default:
+		break;
+	case 't':
+		if (towerDMG < 3) {
+			towerDMG++;
+		}
+
 		break;
 	}
 
@@ -1237,20 +1254,26 @@ void specialKeyHandler(int key, int x, int y)
 		printf("Space bar: Shoot projectile\n");
 		break;
 	case GLUT_KEY_LEFT:
-		// add code here
-		towerX -= 0.5;
-		robotAngle2 -= 30;
-		zPos = zPos;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
+		if (towerDMG < 3) {
+			// add code here
+			towerX -= 0.5;
+			robotAngle2 -= 30;
+			zPos = zPos;
+			glutSetWindow(window3D);
+			glutPostRedisplay();
+		}
+
 		break;
 	case GLUT_KEY_RIGHT:
-		// add code here;
-		towerX += 0.5;
-		robotAngle2 += 30;
-		zPos = zPos;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
+		if (towerDMG < 3) {
+			// add code here;
+			towerX += 0.5;
+			robotAngle2 += 30;
+			zPos = zPos;
+			glutSetWindow(window3D);
+			glutPostRedisplay();
+		}
+
 		break;
 	}
 	glutPostRedisplay();
