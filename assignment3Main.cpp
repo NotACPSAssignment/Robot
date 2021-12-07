@@ -1,4 +1,4 @@
-//Testing
+//Testing 
 
 #define _USE_MATH_DEFINES
 #define STB_IMAGE_IMPLEMENTATION
@@ -70,6 +70,27 @@ struct laserValues {
 	int fired;
 }laserV;
 
+struct laserEn1 {
+	float lEnXPos, lEnYPos, lEnZPos, lEnTimer, lEnAngle;
+	int En1fired;
+}laserE1;
+
+struct laserEn2 {
+	float lEn2XPos, lEn2YPos, lEn2ZPos, lEn2Timer, lEn2Angle;
+	int En2fired;
+}laserE2;
+
+struct laserEn3 {
+	float lEn3XPos, lEn3YPos, lEn3ZPos, lEn3Timer, lEn3Angle;
+	int En3fired;
+}laserE3;
+
+struct laserEn4 {
+	float lEn4XPos, lEn4YPos, lEn4ZPos, lEn4Timer, lEn4Angle;
+	int En4fired;
+}laserE4;
+
+
 // Lighting/shading and material properties for robot - upcoming lecture - just copy for now
 
 GLfloat robotBody_mat_ambient[] = { 0.0f,0.0f,0.0f,1.0f };
@@ -137,15 +158,17 @@ void drawTower();
 void drawTowerCannon();
 void aimUp(void);
 void aimDown(void);
-
 void drawGround();
-
 void fireLaser(int on);
 void drawLaser(int on);
-
 void makeTextureMap();
 void makeTextures();
 void assignColor(GLfloat col[3], GLfloat r, GLfloat g, GLfloat b);
+
+
+void drawEnLaser(int on);
+void fireEnLaser(int on);
+
 static GLfloat textureMap1[64][64][3];
 static GLfloat textureMap2[64][64][3];
 static GLfloat textureMap3[64][64][3];
@@ -928,6 +951,106 @@ void fireLaser(int on) {
 	glutPostRedisplay();
 }
 
+void drawEnLaser(int on) {
+
+	if (on == 1) {
+		glPushMatrix();
+		glTranslatef(laserE1.lEnXPos, laserE1.lEnYPos, laserE1.lEnZPos);
+		glRotatef(laserE1.lEnAngle, 0, 1, 0);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(laserE2.lEn2XPos, laserE2.lEn2YPos, laserE2.lEn2ZPos);
+		glRotatef(laserE2.lEn2Angle, 0, 1, 0);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
+		glPopMatrix();
+
+
+		glPushMatrix();
+		glTranslatef(laserE3.lEn3XPos, laserE3.lEn3YPos, laserE3.lEn3ZPos);
+		glRotatef(laserE3.lEn3Angle, 0, 1, 0);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
+		glPopMatrix();
+
+
+		glPushMatrix();
+		glTranslatef(laserE4.lEn4XPos, laserE4.lEn4YPos, laserE4.lEn4ZPos);
+		glRotatef(laserE4.lEn4Angle, 0, 1, 0);
+		glScalef(0.5, 0.5, 1);
+		glutSolidCone(2, 3, 4, 4);
+		glPopMatrix();
+	}
+}
+
+void fireEnLaser(int on) {
+
+	if (on == 1) {
+
+		if (laserE1.lEnTimer > 0) {
+			laserE1.lEnXPos -= 0.1 * sin((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnZPos -= 0.1 * cos((laserE1.lEnAngle * M_PI) / 180);
+			laserE1.lEnTimer -= 0.01;
+
+		}
+		else {
+			laserE1.lEnTimer = 100;
+			laserE1.lEnXPos = xPos;
+			laserE1.lEnYPos = yPos;
+			laserE1.lEnZPos = zPos;
+			laserE1.En1fired = 0;
+		}
+
+		if (laserE2.lEn2Timer > 0) {
+			laserE2.lEn2XPos -= 0.1 * sin((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2ZPos -= 0.1 * cos((laserE2.lEn2Angle * M_PI) / 180);
+			laserE2.lEn2Timer -= 0.01;
+
+		}
+		else {
+			laserE2.lEn2Timer = 100;
+			laserE2.lEn2XPos = xPos;
+			laserE2.lEn2YPos = yPos;
+			laserE2.lEn2ZPos = zPos;
+			laserE2.En2fired = 0;
+		}
+
+		if (laserE3.lEn3Timer > 0) {
+			laserE3.lEn3XPos -= 0.1 * sin((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3ZPos -= 0.1 * cos((laserE3.lEn3Angle * M_PI) / 180);
+			laserE3.lEn3Timer -= 0.01;
+
+		}
+		else {
+			laserE3.lEn3Timer = 100;
+			laserE3.lEn3XPos = xPos;
+			laserE3.lEn3YPos = yPos;
+			laserE3.lEn3ZPos = zPos;
+			laserE3.En3fired = 0;
+		}
+
+		if (laserE4.lEn4Timer > 0) {
+			laserE4.lEn4XPos -= 0.1 * sin((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4ZPos -= 0.1 * cos((laserE4.lEn4Angle * M_PI) / 180);
+			laserE4.lEn4Timer -= 0.01;
+
+		}
+		else {
+			laserE4.lEn4Timer = 100;
+			laserE4.lEn4XPos = xPos;
+			laserE4.lEn4YPos = yPos;
+			laserE4.lEn4ZPos = zPos;
+			laserE4.En4fired = 0;
+		}
+
+	}
+	glutPostRedisplay();
+}
+
+
 //3D functions
 void screenToWorldCoordinates(int xScreen, int yScreen, GLdouble* xw, GLdouble* yw)
 {
@@ -1038,6 +1161,15 @@ void display3D()
 
 	computeSubdivisionCurve(&subcurve);
 
+	drawEnLaser(laserE1.En1fired);
+	fireEnLaser(laserE1.En1fired);
+	drawEnLaser(laserE2.En2fired);
+	fireEnLaser(laserE2.En2fired);
+	drawEnLaser(laserE3.En3fired);
+	fireEnLaser(laserE3.En3fired);
+	drawEnLaser(laserE4.En4fired);
+	fireEnLaser(laserE4.En4fired);
+
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
@@ -1064,8 +1196,6 @@ void display3D()
 
 
 	glPushMatrix();
-	drawLaser(laserV.fired);
-	fireLaser(laserV.fired);
 	glTranslatef(towerX, 0.0, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
@@ -1209,6 +1339,27 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
+
+		laserE1.lEnXPos = subcurve.curvePoints[currentCurvePoint].x;
+		laserE1.lEnZPos = subcurve.curvePoints[currentCurvePoint].y;
+		laserE1.lEnAngle = robotAngle + 180;
+		laserE1.En1fired = 1;
+
+		laserE2.lEn2XPos = subcurve.curvePoints[currentCurvePoint].x - 6.0;
+		laserE2.lEn2ZPos = subcurve.curvePoints[currentCurvePoint].y - 2;
+		laserE2.lEn2Angle = robotAngle + 180;
+		laserE2.En2fired = 1;
+
+		laserE3.lEn3XPos = subcurve.curvePoints[currentCurvePoint].x + 8.0;
+		laserE3.lEn3ZPos = subcurve.curvePoints[currentCurvePoint].y + 3;
+		laserE3.lEn3Angle = robotAngle + 180;
+		laserE3.En3fired = 1;
+
+		laserE4.lEn4XPos = subcurve.curvePoints[currentCurvePoint].x - 10.0;
+		laserE4.lEn4ZPos = subcurve.curvePoints[currentCurvePoint].y + 4;
+		laserE4.lEn4Angle = robotAngle + 180;
+		laserE4.En4fired = 1;
+
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
