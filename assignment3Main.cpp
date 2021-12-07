@@ -170,6 +170,7 @@ void drawTowerCannon();
 void aimUp(void);
 void aimDown(void);
 void detectEnemyCollision();
+void detectTowerCollision();
 
 void drawGround();
 void fireLaser(int on);
@@ -239,6 +240,8 @@ int col1 = 0;
 int col2 = 0;
 int col3 = 0;
 int col4 = 0;
+
+int towerCol = 0;
 
 GLdouble worldLeft = -12;
 GLdouble worldRight = 12;
@@ -1207,10 +1210,10 @@ void mouse(int button, int state, int x, int y)
 	switch (button)
 	{
 	case GLUT_LEFT_BUTTON:
-	
+
 		break;
 	case GLUT_RIGHT_BUTTON:
-		
+
 		break;
 	default:
 		break;
@@ -1275,6 +1278,8 @@ void drawEnLaser1(int on) {
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
+
+		detectTowerCollision();
 	}
 }
 
@@ -1288,6 +1293,7 @@ void drawEnLaser2(int on) {
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
 
+		detectTowerCollision();
 	}
 }
 void drawEnLaser3(int on) {
@@ -1299,6 +1305,8 @@ void drawEnLaser3(int on) {
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
+
+		detectTowerCollision();
 	}
 }
 
@@ -1311,6 +1319,8 @@ void drawEnLaser4(int on) {
 		glScalef(0.5, 0.5, 1);
 		gluSphere(gluNewQuadric(), 0.2, 20, 20);
 		glPopMatrix();
+
+		detectTowerCollision();
 	}
 }
 
@@ -1418,31 +1428,31 @@ void initSubdivisionCurve() {
 
 	x = 4 * cos(M_PI * 3);
 	y = 4 * sin(M_PI * 0.5);
-	
+
 	subcurve.controlPoints[0].x = 1.5;
 	subcurve.controlPoints[0].y = 24;
 
 	x = 4 * cos(M_PI * 0.5);
 	y = 4 * sin(M_PI * 0.5);
-	
+
 	subcurve.controlPoints[1].x = 0;
 	subcurve.controlPoints[1].y = 12;
 
 	x = 4 * cos(M_PI * 0.3);
 	y = 4 * sin(M_PI * 0.3);
-	
+
 	subcurve.controlPoints[2].x = 2.35;
 	subcurve.controlPoints[2].y = 6.4;
 
 	x = 4 * cos(-M_PI * 0.2);
 	y = 4 * sin(-M_PI * 0.2);
-	
+
 	subcurve.controlPoints[3].x = 5;
 	subcurve.controlPoints[3].y = -0.6;
 
 	x = 4 * cos(-M_PI * 0.28);
 	y = 4 * sin(-M_PI * 0.28);
-	
+
 	subcurve.controlPoints[4].x = 3.2;
 	subcurve.controlPoints[4].y = -3;
 
@@ -1882,4 +1892,29 @@ void detectEnemyCollision() {
 
 	}
 
+}
+
+void detectTowerCollision() {
+	float laser1XDis = abs(towerX - laserE1.lEnXPos);
+	float laser1YDis = towerZ - laserE1.lEnZPos;
+	//printf("laser1y: %f", laser1YDis);
+
+	float laser2XDis = abs(towerX - laserE2.lEn2XPos);
+	float laser2YDis = towerZ - laserE2.lEn2ZPos;
+	//printf("laser2y: %f", laser2YDis);
+	
+	float laser3XDis = abs(towerX - laserE3.lEn3XPos);
+	float laser3YDis = towerZ - laserE3.lEn3ZPos;
+	//printf("laser3y: %f", laser3YDis);
+
+	float laser4XDis = abs(towerX - laserE4.lEn4XPos);
+	float laser4YDis = towerZ - laserE4.lEn4ZPos;
+	//printf("laser4y: %f", laser4YDis);
+	
+	if (laser1XDis < 2 && laser1YDis < 1 && laser1YDis > -1 || laser2XDis < 2 && laser2YDis < 1 && laser2YDis > -1 || laser3XDis < 2 && laser3YDis < 1 && laser3YDis > -1 || laser4XDis < 2 && laser4YDis < 1 && laser4YDis > -1) {
+		towerCol = 1;
+		printf("Tower collision detected");
+	}else {
+
+	}
 }
