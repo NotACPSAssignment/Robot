@@ -1,4 +1,6 @@
-//Testing 
+//CPS511 Assignment 3
+//Justtin Hoang 500884336, Majuth Kirakalaprathapan 500878999, Al Sagun 500882340
+//Section 011
 
 #define _USE_MATH_DEFINES
 #define STB_IMAGE_IMPLEMENTATION
@@ -139,6 +141,7 @@ typedef struct BoundingBox {
 	VECTOR3D max;
 } BBox;
 
+
 // Default Mesh Size
 int meshSize = 16;
 
@@ -158,6 +161,8 @@ void drawTower();
 void drawTowerCannon();
 void aimUp(void);
 void aimDown(void);
+void robotLoop();
+
 void drawGround();
 void fireLaser(int on);
 void drawLaser(int on);
@@ -275,8 +280,10 @@ int main(int argc, char** argv)
 	// Initialize the 3D system
 	init3DSurfaceWindow();
 
+
 	// Start event loop, never returns
 	glutMainLoop();
+
 
 	return 0;
 }
@@ -1086,30 +1093,35 @@ void initSubdivisionCurve() {
 
 	GLdouble x, y;
 
+	x = 4 * cos(M_PI * 3);
+	y = 4 * sin(M_PI * 0.5);
+	printf("%f, %f\n", x, y);
+	subcurve.controlPoints[0].x = 1.5;
+	subcurve.controlPoints[0].y = 24;
+
 	x = 4 * cos(M_PI * 0.5);
 	y = 4 * sin(M_PI * 0.5);
-	subcurve.controlPoints[0].x = x;
-	subcurve.controlPoints[0].y = y;
+	printf("%f, %f\n", x, y);
+	subcurve.controlPoints[1].x = 0;
+	subcurve.controlPoints[1].y = 12;
 
 	x = 4 * cos(M_PI * 0.3);
 	y = 4 * sin(M_PI * 0.3);
-	subcurve.controlPoints[1].x = x;
-	subcurve.controlPoints[1].y = y;
+	printf("%f, %f\n", x, y);
+	subcurve.controlPoints[2].x = 2.35;
+	subcurve.controlPoints[2].y = 6.4;
 
-	x = 4 * cos(M_PI * 0.2);
-	y = 4 * sin(M_PI * 0.2);
-	subcurve.controlPoints[2].x = x;
-	subcurve.controlPoints[2].y = y;
+	x = 4 * cos(-M_PI * 0.2);
+	y = 4 * sin(-M_PI * 0.2);
+	printf("%f, %f\n", x, y);
+	subcurve.controlPoints[3].x = 5;
+	subcurve.controlPoints[3].y = -0.6;
 
-	x = 4 * cos(-M_PI * 0.25);
-	y = 4 * sin(-M_PI * 0.25);
-	subcurve.controlPoints[3].x = x;
-	subcurve.controlPoints[3].y = y;
-
-	x = 4 * cos(-M_PI * 0.25);
-	y = 4 * sin(-M_PI * 0.25);
-	subcurve.controlPoints[4].x = x;
-	subcurve.controlPoints[4].y = y;
+	x = 4 * cos(-M_PI * 0.28);
+	y = 4 * sin(-M_PI * 0.28);
+	printf("%f, %f\n", x, y);
+	subcurve.controlPoints[4].x = 3.2;
+	subcurve.controlPoints[4].y = -3;
 
 	subcurve.numControlPoints = 5;
 	subcurve.subdivisionSteps = 4;
@@ -1137,6 +1149,10 @@ void reshape3D(int w, int h)
 	gluLookAt(0.0, 6.0, 22.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
+void drawEnemyBots() {
+
+}
+
 void display3D()
 {
 
@@ -1159,7 +1175,9 @@ void display3D()
 	//groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
 
-	computeSubdivisionCurve(&subcurve);
+	//computeSubdivisionCurve(&subcurve);
+	draw3DSubdivisionCurve();
+	draw3DControlPoints();
 
 	drawEnLaser(laserE1.En1fired);
 	fireEnLaser(laserE1.En1fired);
@@ -1335,6 +1353,7 @@ void keyboard(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 32:
+
 		laserV.laserXPos = towerX;
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
@@ -1363,6 +1382,12 @@ void keyboard(unsigned char key, int x, int y)
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
+		}
+		if (towerDMG < 3) {
+			laserV.laserXPos = towerX;
+			laserV.laserZPos = zPos;
+			laserV.laserAngle = towerAngle;
+			laserV.fired = 1;
 		}
 		break;
 		break;
@@ -1429,3 +1454,53 @@ void specialKeyHandler(int key, int x, int y)
 	}
 	glutPostRedisplay();
 }
+
+
+void draw3DSubdivisionCurve()
+{
+	// Subdivide the given curve
+	computeSubdivisionCurve(&subcurve);
+
+	int i = 0;
+
+	glPushMatrix();
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, threeDCurve_ambient);
+	glBegin(GL_LINE_STRIP);
+	for (i = 0; i < subcurve.numCurvePoints; i++) {
+		glVertex3f(subcurve.curvePoints[i].x, 0.5, -subcurve.curvePoints[i].y);
+	}
+	glEnd();
+	glPopMatrix();
+}
+
+
+
+void draw3DControlPoints()
+{
+
+	int i, j;
+	for (i = 0; i < subcurve.numControlPoints; i++) {
+		glPushMatrix();
+		glTranslatef(circles[i].circleCenter.x, 0.5, -circles[i].circleCenter.y);
+		// for the hoveredCircle, draw an outline and change its colour
+		if (i == hoveredCircle) {
+			// outline
+			//glColor3f(0.0, 1.0, 0.0);
+			glBegin(GL_LINE_LOOP);
+			for (j = 0; j < numCirclePoints; j++) {
+				glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
+			}
+			glEnd();
+			// colour change
+			//glColor3f(0.5, 0.0, 1.0);
+		}
+		glBegin(GL_LINE_LOOP);
+		for (j = 0; j < numCirclePoints; j++) {
+			glVertex3f(circles[i].circlePoints[j].x, 0, -circles[i].circlePoints[j].y);
+		}
+		glEnd();
+		glPopMatrix();
+
+	}
+}
+
