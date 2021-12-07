@@ -1810,6 +1810,10 @@ void keyboard(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 32:
+		laserV.laserXPos = towerX; 
+		laserV.laserZPos = zPos;
+		laserV.laserAngle = towerAngle;
+		laserV.fired = 1;
 		if (towerDMG == 3)
 		{
 			laserV.fired = 0;
