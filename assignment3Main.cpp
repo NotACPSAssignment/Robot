@@ -1171,9 +1171,9 @@ void display3D()
 	groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
 
-	//computeSubdivisionCurve(&subcurve);
-	draw3DSubdivisionCurve();
-	draw3DControlPoints();
+	computeSubdivisionCurve(&subcurve);
+	//draw3DSubdivisionCurve();
+	//draw3DControlPoints();
 
 	glPushMatrix();
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
@@ -1220,6 +1220,8 @@ void display3D()
 	glPopMatrix();
 
 	glPushMatrix();
+	drawLaser(laserV.fired);
+	fireLaser(laserV.fired);
 	glTranslatef(towerX, 0.9, 10);
 	glScalef(0.4, 0.4, 0.4);
 	glRotatef(90, 1.0, 0.0, 0.0);
@@ -1455,6 +1457,7 @@ void specialKeyHandler(int key, int x, int y)
 	glutPostRedisplay();
 }
 
+/*
 
 void draw3DSubdivisionCurve()
 {
@@ -1503,3 +1506,5 @@ void draw3DControlPoints()
 
 	}
 }
+
+*/
