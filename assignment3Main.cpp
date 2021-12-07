@@ -1303,9 +1303,6 @@ void display3D()
 	glPopMatrix();
 
 	glPushMatrix();
-	glScalef(bot3Scale, bot3Scale, bot3Scale);
-	glTranslatef(subcurve.curvePoints[currentCurvePoint].x, 0, -subcurve.curvePoints[currentCurvePoint].y);
-
 	glScalef(bot4Scale, bot4Scale, bot4Scale);
 	glTranslatef(subcurve.curvePoints[currentCurvePoint].x + 8.0, 0, -subcurve.curvePoints[currentCurvePoint].y + 2.0);
 
