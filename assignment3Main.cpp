@@ -1027,7 +1027,7 @@ void display3D()
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	// Draw ground
 	glPushMatrix();
-	glTranslatef(0.0, -20.0, 0.0);
+	glTranslatef(0.0, -20.0, 10.0);
 	drawGround();
 	//groundMesh->DrawMesh(meshSize);
 	glPopMatrix();
@@ -1223,6 +1223,12 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	default:
 		break;
+	case 't':
+		if (towerDMG < 3) {
+			towerDMG++;
+		}
+		
+		break;
 	}
 
 	glutPostRedisplay();   // Trigger a window redisplay
@@ -1239,20 +1245,26 @@ void specialKeyHandler(int key, int x, int y)
 		printf("Space bar: Shoot projectile\n");
 		break;
 	case GLUT_KEY_LEFT:
-		// add code here
-		towerX -= 0.5;
-		robotAngle2 -= 30;
-		zPos = zPos;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
+		if (towerDMG < 3) {
+			// add code here
+			towerX -= 0.5;
+			robotAngle2 -= 30;
+			zPos = zPos;
+			glutSetWindow(window3D);
+			glutPostRedisplay();
+		}
+		
 		break;
 	case GLUT_KEY_RIGHT:
-		// add code here;
-		towerX += 0.5;
-		robotAngle2 += 30;
-		zPos = zPos;
-		glutSetWindow(window3D);
-		glutPostRedisplay();
+		if (towerDMG < 3) {
+			// add code here;
+			towerX += 0.5;
+			robotAngle2 += 30;
+			zPos = zPos;
+			glutSetWindow(window3D);
+			glutPostRedisplay();
+		}
+		
 		break;
 	}
 	glutPostRedisplay();
