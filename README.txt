@@ -4,12 +4,13 @@ Section 01
 
 **
 Special consideration from the Professor to allow for a group of 3 as long as we followed the following:
-Al: Model remake & Projectile, help key
-Majuth: Collision & Road
+Al: Models & Projectile, help key
+Majuth: Collision detection & Spline Path
 Justtin: Texture mapping & animations, POV change, projectile assistance
 **
 
-Default installation of Studio Code according to course requirements
+Default installation of Studio Code according to course requirements,
+Make sure bmp files are in directory where asssignment3Main can access it.
 
 Files required to run:
 assignment3Main.cpp
