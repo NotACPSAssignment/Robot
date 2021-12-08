@@ -1028,11 +1028,11 @@ void drawTowerCannon() {
 		glRotatef(25, 1, -1, 0);
 
 	}
-	else if (towerDMG == 2) {
+	else if (towerDMG == 14) {
 		glRotatef(-45, 1, -1, 0);
 
 	}
-	else if (towerDMG == 3) {
+	else if (towerDMG == 21) {
 		glRotatef(-90, 1, -1, 0);
 
 	}
@@ -1731,7 +1731,7 @@ void keyboard(unsigned char key, int x, int y)
 		laserV.laserZPos = zPos;
 		laserV.laserAngle = towerAngle;
 		laserV.fired = 1;
-		if (towerDMG == 3)
+		if (towerDMG == 21)
 		{
 			laserV.fired = 0;
 		}
@@ -1770,18 +1770,11 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	default:
 		break;
-	case 't':
-		if (towerDMG < 3) {
-			towerDMG++;
-		}
-
-		break;
+	
 	case 'p':
 		camera = !camera;
 		break;
-	case 'b':
-		shot1 = !shot1;
-		break;
+	
 	}
 
 	glutPostRedisplay();   // Trigger a window redisplay
@@ -1798,7 +1791,7 @@ void specialKeyHandler(int key, int x, int y)
 		printf("Space bar: Shoot projectile\n");
 		break;
 	case GLUT_KEY_LEFT:
-		if (towerDMG < 3) {
+		if (towerDMG < 21) {
 			// add code here
 			if (towerX > -9) {
 				towerX -= 0.5;
@@ -1815,7 +1808,7 @@ void specialKeyHandler(int key, int x, int y)
 
 		break;
 	case GLUT_KEY_RIGHT:
-		if (towerDMG < 3) {
+		if (towerDMG < 21) {
 			// add code here;
 			if (towerX < 14) {
 				towerX += 0.5;
@@ -1913,7 +1906,12 @@ void detectTowerCollision() {
 	
 	if (laser1XDis < 2 && laser1YDis < 1 && laser1YDis > -1 || laser2XDis < 2 && laser2YDis < 1 && laser2YDis > -1 || laser3XDis < 2 && laser3YDis < 1 && laser3YDis > -1 || laser4XDis < 2 && laser4YDis < 1 && laser4YDis > -1) {
 		towerCol = 1;
-		printf("Tower collision detected");
+		towerDMG++;
+		if (towerDMG > 21) {
+			towerDMG = 21;
+		}
+		
+		printf("Tower collision detected\n");
 	}else {
 
 	}
